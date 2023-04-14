@@ -1,33 +1,59 @@
-import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:http/http.dart' as http;
+import 'package:jdoodle/providers/websocket_model.dart';
+import 'package:stomp_dart_client/stomp.dart';
+import 'package:stomp_dart_client/stomp_config.dart';
 
-import '../models/code_model.dart';
+const _wsTokenAddress = 'https://throbbing-snowflake-655.fly.dev/';
 
-const clientId = "f24fcb9aa1f0a602f3f645ff314c52a5";
-const clientSecret =
-    "af8fc15e85d33fd1f704f2f322cd9fcb3effbce9ee641c5fc767f47b975cc4f4";
-const wsTokenUrl = "https://api.jdoodle.com/v1/auth-token";
+/// Provides the websocket instance as a stream
+final websocketProvider = StreamProvider<WebsocketModel>((ref) async* {
+  var websocket = WebsocketModel.initial();
+  final wsTokenUrl = Uri.parse(_wsTokenAddress);
+  final response = await http.post(wsTokenUrl);
+  final body = json.decode(response.body) as Map<String, String>;
+  final token = body['token'];
 
-final websocketProvider = StreamProvider<CodeModel>((ref) async* {
-  final urlWs = Uri.parse(wsTokenUrl);
-  final channel = WebSocketChannel.connect(urlWs);
-  yield CodeModel();
+  if (token != null) {
+    const jdoodleApiUrl = 'https://api.jdoodle.com/v1/stomp';
+    final config = StompConfig.SockJS(
+        url: jdoodleApiUrl,
+        onWebSocketError: (dynamic error) {
+          print(error.toString());
+          websocket = WebsocketModel.error(error: error.toString());
+        },
+        onConnect: (frame) => print("websocket connected"),
+        onStompError: (error) => print("stomp error: ${error.body}"));
+    final client = StompClient(config: config);
+
+    if (websocket.error == null) {
+      websocket =
+          WebsocketModel(client: client, token: token, isConnected: true);
+    }
+  }
+  yield websocket;
 });
 
-final channelProvider =
-    FutureProvider.autoDispose<WebSocketChannel>((ref) async {
-  final wsTokenEndpoint = Uri.parse('$wsTokenUrl$clientId$clientSecret');
-  const data = '{"clientId":"$clientId","clientSecret":"$clientSecret}';
-  // final request = HttpRequest.request(wsTokenUrl, method: "POST",sendData: data);
-  // request.open("POST", wsTokenUrl);
-  final response = await http.get(wsTokenEndpoint);
-  print(response.body);
-  print('channelProvider');
-  final wsUrl = Uri.parse(response.body);
-  return WebSocketChannel.connect(Uri.parse("response.body"));
-});
+// final stream = websocketProvider.addListener(node, (previous, next) {},
+//     onError: onError,
+//     onDependencyMayHaveChanged: onDependencyMayHaveChanged,
+//     fireImmediately: fireImmediately);
+// final stream2 = websocketProvider.select((value) => value);
+
+// final channelProvider =
+//     FutureProvider.autoDispose<WebSocketChannel>((ref) async {
+//   final wsTokenEndpoint = Uri.parse('$wsTokenUrl$clientId$clientSecret');
+//   const data = '{"clientId":"$clientId","clientSecret":"$clientSecret}';
+//   // final request = HttpRequest.request(wsTokenUrl, method: "POST",sendData: data);
+//   // request.open("POST", wsTokenUrl);
+//   final response = await http.get(wsTokenEndpoint);
+//   print(response.body);
+//   print('channelProvider');
+//   final wsUrl = Uri.parse(response.body);
+//   return WebSocketChannel.connect(Uri.parse("response.body"));
+// });
 
 // final streamProvider = StreamProvider.autoDispose<dynamic>((ref) {
 //   print('streamProvider | Metrics - socket opened');
