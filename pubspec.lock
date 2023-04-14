@@ -139,6 +139,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
+  intl:
+    dependency: transitive
+    description:
+      name: intl
+      sha256: a3715e3bc90294e971cb7dc063fbf3cd9ee0ebf8604ffeafabd9e6f16abbdbe6
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.18.0"
   js:
     dependency: transitive
     description:
@@ -224,6 +232,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.2"
+  sockjs_client_wrapper:
+    dependency: "direct main"
+    description:
+      name: sockjs_client_wrapper
+      sha256: c304e85f86d50503560bb2bd226d32f1d5144123c319ee505a33e15b07917054
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   source_span:
     dependency: transitive
     description:
@@ -248,6 +264,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.2+1"
+  stomp_dart_client:
+    dependency: "direct main"
+    description:
+      name: stomp_dart_client
+      sha256: "8779d1383f0a6faa0623af27ab6d4b228ab76c75020d9a83ade5ee204eac5153"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.4"
   stream_channel:
     dependency: transitive
     description:
@@ -296,6 +320,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
+  w_common:
+    dependency: transitive
+    description:
+      name: w_common
+      sha256: "54e34b485571aa5332a7ab22658fcd1f747558f03fb04d9715e2d2d9bd6ee32e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
   web_socket_channel:
     dependency: "direct main"
     description:
