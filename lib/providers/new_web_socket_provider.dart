@@ -25,10 +25,10 @@ class WebsocketProvider extends StateNotifier<AsyncValue<WebsocketModel>> {
     final websocketTokenUrl = Uri.parse(wsTokenAddress);
     final websocketTokenResponse = await http.post(websocketTokenUrl);
     final body =
-        json.decode(websocketTokenResponse.body) as Map<String, String>;
+        json.decode(websocketTokenResponse.body) as Map<String, dynamic>;
     final token = body['token'];
 
-    if (token != null) {
+    if (token is String) {
       final config = StompConfig.SockJS(
         url: jdoodleApiUrl,
         onWebSocketError: (dynamic error) {

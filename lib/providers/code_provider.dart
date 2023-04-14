@@ -6,7 +6,8 @@ import 'package:jdoodle/providers/new_web_socket_provider.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
 
 /// Provider for the current code state
-final codeProvider = Provider(CodeNotifier.new);
+final codeProvider =
+    StateNotifierProvider<CodeNotifier, CodeModel>(CodeNotifier.new);
 
 ///
 class CodeNotifier extends StateNotifier<CodeModel> {
@@ -43,16 +44,32 @@ class CodeNotifier extends StateNotifier<CodeModel> {
     }
   }
 
-  void handleMessageFromServer(StompFrame stompFrame) {
-    final frameBody = stompFrame.body;
-
-    if (frameBody != null) {
-      final decoded = jsonDecode(frameBody) as Map<String, String>;
-      final message = decoded['message'];
-      if (message != null) {
-        print(message);
-        final model = CodeModel(language: 'java')..text = message;
-        state = model;
+  void handleMessageFromServer(StompFrame message) {
+    final messageBody = message.body;
+    final msgId = message.headers['message-id'];
+    print('messageID: $msgId');
+    if (msgId != null) {
+      final msgSeq = int.parse(msgId.substring(msgId.lastIndexOf('-') + 1));
+      print('message Sequence $msgSeq');
+    }
+    final statusCodeHeader = message.headers['statusCode'];
+    if (statusCodeHeader != null) {
+      final statusCode = int.parse(statusCodeHeader);
+      print('status code: $statusCode');
+    }
+    final allHeaders = message.headers;
+    print(allHeaders);
+    if (messageBody != null) {
+      try {
+        final decoded = jsonDecode(messageBody) as Map<String, String>;
+        final message = decoded['message'];
+        if (message != null) {
+          print(message);
+          final model = CodeModel(language: 'java')..text = message;
+          state = model;
+        }
+      } catch (e) {
+        print("messageBody ($messageBody) couldn't be decoded.");
       }
     }
   }

@@ -1,80 +1,58 @@
+// ignore_for_file: require_trailing_commas
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jdoodle/providers/code_provider.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 
 void main() async {
   runApp(const ProviderScope(child: JdoodleApp()));
-
-  final data = jsonEncode({
-    "script": script,
-    "language": "java",
-    "versionIndex": 4,
-  });
-  const httpswsu = "https://api.jdoodle.com/v1/stomp";
-
-  final config = StompConfig.SockJS(
-      url: httpswsu,
-      beforeConnect: () async {
-        print('waiting to connect...');
-        await Future.delayed(const Duration(milliseconds: 200));
-        print('connecting...');
-      },
-      onWebSocketError: (dynamic error) => print(error.toString()),
-      onConnect: (frame) => print(
-          "body: ${frame.body} headers: ${frame.headers} command: ${frame.command}"),
-      onStompError: (p1) => print(p1.body));
-  StompClient client = StompClient(config: config);
-
-  client.activate();
-  await Future.delayed(const Duration(seconds: 2));
-  print(client.connected);
-
-  void send() => client.send(
-      destination: '/app/execute-ws-api-token',
-      body: data,
-      headers: {"message_type": 'execute', "token": token});
-
-  client.subscribe(
-      destination: '/user/queue/execute-i',
-      callback: (frame) {
-        print("subscribe callback");
-        print(
-            "body: ${frame.body} headers: ${frame.headers} command: ${frame.command}");
-      },
-      headers: {"token": token});
-  await Future.delayed(const Duration(seconds: 2));
-
-  send();
-  await Future.delayed(const Duration(seconds: 2));
-  send();
-
-  // print(client.connected);
-  // final io = IO.io(wsu);
-
-  // io.onConnect((data) => print("connected"));
-  // io.onConnectError((data) => print("connect error $data"));
-  // final ws = WebSocketChannel.connect(Uri.parse(wsu));
-  // ws.sink.add("let x = 0;");
-  // // ws.stream.listen((event) => print(event));
-  // ws.stream.listen((event) => print("event $event ${event.runtimeType}"));
-  // } else {
-  //   print(response.reasonPhrase);
-  // }
 }
 
-class JdoodleApp extends StatelessWidget {
+class JdoodleApp extends ConsumerWidget {
   const JdoodleApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final codeNotifier = ref.watch(codeProvider);
+    void simulateSendMessage() {
+      const script = '''
+import java.util.Scanner;
+ import java.util.NoSuchElementException;
+
+public class MyClass {
+ public static void main(String args[]) {
+		Scanner scanner = new Scanner(System.in);
+
+		try {
+		 System.out.println("Type a Line and enter....");
+		String txt = scanner.nextLine();
+		System.out.println("You have typed...");
+		System.out.println(txt);
+		} catch (NoSuchElementException e) {
+		    System.out.println("Type something in the Stdin box above....");
+		}
+
+	}
+}''';
+      ref.read(codeProvider.notifier).sendMessageToServer(script);
+    }
+
     return MaterialApp(
-      home: const Scaffold(
-          body: Center(
-        child: Text("Splash screen"),
-      )),
+      home: Scaffold(
+          body: Column(children: [
+        Text(codeNotifier.text),
+        ElevatedButton(
+            onPressed: simulateSendMessage,
+            child: const SizedBox(
+              height: 20,
+              width: 50,
+              child: Text("send some code"),
+            ))
+      ])),
     );
   }
 }
