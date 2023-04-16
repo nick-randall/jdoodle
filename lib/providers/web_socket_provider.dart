@@ -5,82 +5,111 @@ import 'package:http/http.dart' as http;
 import 'package:jdoodle/providers/websocket_model.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
+import 'package:stomp_dart_client/stomp_frame.dart';
 
-const _wsTokenAddress = 'https://throbbing-snowflake-655.fly.dev/';
+const websocketTokenAddress = 'https://throbbing-snowflake-655.fly.dev/';
 
-/// Provides the websocket instance as a stream
-final websocketProvider = StreamProvider<WebsocketModel>((ref) async* {
-  var websocket = WebsocketModel.initial();
-  final wsTokenUrl = Uri.parse(_wsTokenAddress);
-  final response = await http.post(wsTokenUrl);
-  final body = json.decode(response.body) as Map<String, String>;
-  final token = body['token'];
+/// Responsible for acquiring the websocket token and initiating the websocket
+/// connection.
+final websocketProvider =
+    StateNotifierProvider<WebsocketProvider, AsyncValue<WebsocketModel>>(
+  (ref) => WebsocketProvider(),
+);
 
-  if (token != null) {
-    const jdoodleApiUrl = 'https://api.jdoodle.com/v1/stomp';
-    final config = StompConfig.SockJS(
+class WebsocketProvider extends StateNotifier<AsyncValue<WebsocketModel>> {
+  WebsocketProvider() : super(AsyncValue.data(WebsocketModel.initial())) {
+    connectWebsocket();
+  }
+
+  static const jdoodleApiUrl = 'https://api.jdoodle.com/v1/stomp';
+
+  Future<void> connectWebsocket() async {
+    final websocketToken = await _fetchWebsocketToken();
+    if (websocketToken != null) {
+      final config = StompConfig.SockJS(
         url: jdoodleApiUrl,
-        onWebSocketError: (dynamic error) {
-          print(error.toString());
-          websocket = WebsocketModel.error(error: error.toString());
-        },
-        onConnect: (frame) => print("websocket connected"),
-        onStompError: (error) => print("stomp error: ${error.body}"));
-    final client = StompClient(config: config);
+        onWebSocketError: _handleWebsocketError,
+        onConnect: _handleWebsocketConnected,
+        onWebSocketDone: _handleWebsocketDisconnected,
+        onStompError: (error) => print('stomp error: ${error.body}'),
+      );
 
-    if (websocket.error == null) {
-      websocket =
-          WebsocketModel(client: client, token: token, isConnected: true);
+      final client = StompClient(config: config)..activate();
+      state = AsyncValue.data(
+        WebsocketModel(
+          client: client,
+          token: websocketToken,
+        ),
+      );
     }
   }
-  yield websocket;
-});
 
-// final stream = websocketProvider.addListener(node, (previous, next) {},
-//     onError: onError,
-//     onDependencyMayHaveChanged: onDependencyMayHaveChanged,
-//     fireImmediately: fireImmediately);
-// final stream2 = websocketProvider.select((value) => value);
+  Future<String?> _fetchWebsocketToken() async {
+    final websocketTokenUrl = Uri.parse(websocketTokenAddress);
+    try {
+      final websocketTokenResponse = await http.post(websocketTokenUrl);
+      final body =
+          json.decode(websocketTokenResponse.body) as Map<String, dynamic>;
+      final token = body['token'];
+      if (token is String) {
+        print(token);
+        return token;
+      } else {
+        throw 'Error getting token';
+      }
+    } catch (e) {
+      print('Error getting token');
+    }
+    return null;
+  }
 
-// final channelProvider =
-//     FutureProvider.autoDispose<WebSocketChannel>((ref) async {
-//   final wsTokenEndpoint = Uri.parse('$wsTokenUrl$clientId$clientSecret');
-//   const data = '{"clientId":"$clientId","clientSecret":"$clientSecret}';
-//   // final request = HttpRequest.request(wsTokenUrl, method: "POST",sendData: data);
-//   // request.open("POST", wsTokenUrl);
-//   final response = await http.get(wsTokenEndpoint);
-//   print(response.body);
-//   print('channelProvider');
-//   final wsUrl = Uri.parse(response.body);
-//   return WebSocketChannel.connect(Uri.parse("response.body"));
-// });
+  void reestablishConnection() {
+    final websocket = state.value;
+    if (websocket != null) {
+      state = AsyncValue.data(WebsocketModel.initial());
+      websocket.client.deactivate();
+    }
+  }
 
-// final streamProvider = StreamProvider.autoDispose<dynamic>((ref) {
-//   print('streamProvider | Metrics - socket opened');
-//   var stream = ref.watch(channelProvider).stream;
+  void disconnect() {
+    final websocket = state.value;
+    if (websocket != null) {
+      state = AsyncValue.data(
+        WebsocketModel.initial().copyWith(
+          reconnectOnDisconnect: false,
+        ),
+      );
+      websocket.client.deactivate();
+    }
+  }
 
-//   var isSubControlError = false;
+  void _handleWebsocketConnected(StompFrame frame) {
+    print('websocket connected');
+    // This callback fires after WebsocketModel already initialised.
+    // Just need to change isConnected to true so clients are allowed to use it.
+    final prevState = state.value;
+    if (prevState != null) {
+      state = AsyncValue.data(
+        prevState.copyWith(
+          isConnected: true,
+        ),
+      );
+    }
+  }
 
-//   final sub = stream.listen(
-//     (data) {
-//       ref.watch(channelProvider).sink?.add('> sink add ${httpParam.path}');
-//     },
-//     onError: (_, stack) => null,
-//     onDone: () async {
-//       isSubControlError = true;
-//       await Future.delayed(const Duration(seconds: 10));
-//       ref.container.refresh(channelProvider);
-//     },
-//   );
+  void _handleWebsocketDisconnected() {
+    state = AsyncValue.data(WebsocketModel.initial());
+    final websocket = state.value;
+    if (websocket != null && websocket.reconnectOnDisconnect) {
+      state = AsyncValue.data(WebsocketModel.initial());
+      connectWebsocket();
+    } else {
+      dispose();
+    }
+  }
 
-//   ref.onDispose(() {
-//     print('streamProvider | Metrics - socket closed');
-//     sub.cancel();
-//     if (!isSubControlError) {
-//       ref.watch(channelProvider).sink.close(1001);
-//     }
-//     stream = null;
-//   });
-
-//   return stream;
-// });
+  void _handleWebsocketError(dynamic error) {
+    final errorState = WebsocketModel.error(error: error.toString());
+    state = AsyncValue.error(errorState, StackTrace.current);
+  }
+}

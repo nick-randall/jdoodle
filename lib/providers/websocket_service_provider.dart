@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jdoodle/models/code_model.dart';
-import 'package:jdoodle/providers/new_web_socket_provider.dart';
+import 'package:jdoodle/providers/web_socket_provider.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
 
 /// This service has the abstract methods for interacting with the websocket
