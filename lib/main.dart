@@ -1,12 +1,8 @@
 // ignore_for_file: require_trailing_commas
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:jdoodle/providers/code_provider.dart';
-import 'package:stomp_dart_client/stomp.dart';
-import 'package:stomp_dart_client/stomp_config.dart';
+import 'package:jdoodle/providers/websocket_service_provider.dart';
 
 void main() async {
   runApp(const ProviderScope(child: JdoodleApp()));
@@ -17,7 +13,7 @@ class JdoodleApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final codeNotifier = ref.watch(codeProvider);
+    final codeNotifier = ref.watch(websocketServiceProvider);
     void simulateSendMessage() {
       const script = '''
 import java.util.Scanner;
@@ -38,17 +34,17 @@ public class MyClass {
 
 	}
 }''';
-      ref.read(codeProvider.notifier).sendMessageToServer(
-            message: script,
-            input: false,
+      ref
+          .read(websocketServiceProvider.notifier)
+          .sendExecuteScriptMessageToServer(
+            script: script,
           );
     }
 
     void inputText(String input) {
       print(input);
-      ref.read(codeProvider.notifier).sendMessageToServer(
-            message: input,
-            input: true,
+      ref.read(websocketServiceProvider.notifier).sendInputMessageToServer(
+            input: input,
           );
     }
 
@@ -66,13 +62,6 @@ public class MyClass {
               width: 50,
               child: Text('execute code'),
             )),
-        ElevatedButton(
-            onPressed: () => inputText("x"),
-            child: const SizedBox(
-              height: 20,
-              width: 50,
-              child: Text('execute code'),
-            ))
       ])),
     );
   }

@@ -5,13 +5,14 @@ import 'package:jdoodle/models/code_model.dart';
 import 'package:jdoodle/providers/new_web_socket_provider.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
 
-/// Provider for the current code state
-final codeProvider =
-    StateNotifierProvider<CodeNotifier, CodeModel>(CodeNotifier.new);
+/// This service has the abstract methods for interacting with the websocket
+final websocketServiceProvider =
+    StateNotifierProvider<WebsocketServiceNotifier, CodeModel>(
+  WebsocketServiceNotifier.new,
+);
 
-///
-class CodeNotifier extends StateNotifier<CodeModel> {
-  CodeNotifier(this.ref) : super(CodeModel(language: 'java')) {
+class WebsocketServiceNotifier extends StateNotifier<CodeModel> {
+  WebsocketServiceNotifier(this.ref) : super(CodeModel(language: 'java')) {
     final wsProvider = ref.watch(websocketProvider);
     final websocket = wsProvider.value;
     if (websocket != null && websocket.isConnected) {
@@ -27,27 +28,38 @@ class CodeNotifier extends StateNotifier<CodeModel> {
 
   final Ref ref;
 
-  void sendMessageToServer({
-    required String message,
-    required bool input,
+  void sendExecuteScriptMessageToServer({
+    required String script,
   }) {
     final wsProvider = ref.watch(websocketProvider);
     final websocket = wsProvider.value;
     if (websocket != null && websocket.isConnected) {
       final data = jsonEncode({
-        'script': message,
+        'script': script,
         'language': state.language,
         'versionIndex': 4,
       });
       websocket.client.send(
         destination: _sendDestination,
         body: data,
-        headers: input
-            ? {'message_type': 'input', 'token': websocket.token}
-            : {
-                'message_type': 'execute',
-                'token': websocket.token,
-              },
+        headers: {
+          'message_type': 'execute',
+          'token': websocket.token,
+        },
+      );
+    }
+  }
+
+  void sendInputMessageToServer({
+    required String input,
+  }) {
+    final wsProvider = ref.watch(websocketProvider);
+    final websocket = wsProvider.value;
+    if (websocket != null && websocket.isConnected) {
+      websocket.client.send(
+        destination: _sendDestination,
+        body: input,
+        headers: {'message_type': 'input'},
       );
     }
   }
@@ -63,6 +75,9 @@ class CodeNotifier extends StateNotifier<CodeModel> {
     final statusCodeHeader = message.headers['statusCode'];
     if (statusCodeHeader != null) {
       final statusCode = int.parse(statusCodeHeader);
+      if (statusCode == 400 && message.body == 'Token Expired') {
+        print('Token is Expired! Request new one from server...');
+      }
       print('status code: $statusCode');
     }
     final allHeaders = message.headers;
@@ -81,4 +96,8 @@ class CodeNotifier extends StateNotifier<CodeModel> {
       }
     }
   }
+
+  // void _handleExpiredToken() {
+  //   ref.read(websocketProvider.notifier).
+  // }
 }
