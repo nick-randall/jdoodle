@@ -1,79 +1,22 @@
-/*Java
-Java (Advanced)
-C
-C++
-C++ 14
-C++ 17
-C99
-C#
-PHP
-Perl
-Ruby
-Python2
-Python3
-SQL
-Scala
-VB.Net
-Pascal
-Haskell
-Kotlin
-Swift
-Objective-C
-Groovy
-Fortran
-Brainf**k
-Hack
-TCL
-Lua
-Rust
-F#
-Ada
-D
-Dart
-YaBasic
-Free Basic
-Clojure
-Verilog
-NodeJS
-Scheme
-Forth
-Prolog
-Bash
-COBOL
-OCTAVE/ Matlab
-Icon
-CoffeeScript
-Assembler (GCC)
-R
-Assembler (NASM)
-Intercal
-Nemerle
-Ocaml
-Unlambda
-Picolisp
-CLISP
-Elixir
-SpiderMonkey
-Rhino JS
-BC
-Nim
-Factor
-Falcon
-Fantom
-Pike
-Go
-OZ-Mozart
-LOLCODE
-Racket
-SmallTalk
-Whitespace
-Erlang
-J Lang
-Assembler (FASM)
-AWK
-Algol 68
-Befunge
-Haxe
-J Bang
-HTML & Javascript
-Blockly*/
+class JdoodleLanguage {
+  JdoodleLanguage({
+    required this.name,
+    required this.code,
+    required this.version,
+    required this.versionIndex,
+  });
+
+  final String name;
+  final String code;
+  final String version;
+  final String versionIndex;
+}
+
+final languages = <JdoodleLanguage>[
+  JdoodleLanguage(
+    name: 'Java',
+    code: 'java',
+    version: 'JDK 1.8.0_66',
+    versionIndex: '0',
+  )
+];

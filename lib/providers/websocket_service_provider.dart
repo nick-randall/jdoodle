@@ -66,34 +66,14 @@ class WebsocketServiceNotifier extends StateNotifier<CodeModel> {
 
   void handleMessageFromServer(StompFrame message) {
     final messageBody = message.body;
-    final msgId = message.headers['message-id'];
-    print('messageID: $msgId');
-    if (msgId != null) {
-      final msgSeq = int.parse(msgId.substring(msgId.lastIndexOf('-') + 1));
-      print('message Sequence $msgSeq');
-    }
     final statusCodeHeader = message.headers['statusCode'];
     if (statusCodeHeader != null) {
       final statusCode = int.parse(statusCodeHeader);
-      if (statusCode == 400 && message.body == 'Token Expired') {
-        print('Token is Expired! Request new one from server...');
+      if (statusCode == 400 && messageBody == 'Token Expired') {
+        print('Token is Expired! Attempting to re-establish connection');
+        ref.read(websocketProvider.notifier).reestablishConnection();
       }
       print('status code: $statusCode');
-    }
-    final allHeaders = message.headers;
-    print(allHeaders);
-    if (messageBody != null) {
-      try {
-        final decoded = jsonDecode(messageBody) as Map<String, String>;
-        final message = decoded['message'];
-        if (message != null) {
-          print(message);
-          final model = CodeModel(language: 'java')..text = message;
-          state = model;
-        }
-      } catch (e) {
-        print("messageBody ($messageBody) couldn't be decoded.");
-      }
     }
   }
 

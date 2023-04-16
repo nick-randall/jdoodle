@@ -24,42 +24,61 @@ class WebsocketProvider extends StateNotifier<AsyncValue<WebsocketModel>> {
   static const jdoodleApiUrl = 'https://api.jdoodle.com/v1/stomp';
 
   Future<void> connectWebsocket() async {
-    // if (state.value.isConnected)
+    final websocketToken = await _fetchWebsocketToken();
+    final config = StompConfig.SockJS(
+      url: jdoodleApiUrl,
+      onWebSocketError: _handleWebsocketError,
+      onConnect: _handleWebsocketConnected,
+      onWebSocketDone: _handleWebsocketDisconnected,
+      onStompError: (error) => print('stomp error: ${error.body}'),
+    );
+
+    final client = StompClient(config: config)..activate();
+    state = AsyncValue.data(
+      WebsocketModel(
+        client: client,
+        token: websocketToken,
+      ),
+    );
+  }
+
+  Future<String> _fetchWebsocketToken() async {
     final websocketTokenUrl = Uri.parse(wsTokenAddress);
     final websocketTokenResponse = await http.post(websocketTokenUrl);
     final body =
         json.decode(websocketTokenResponse.body) as Map<String, dynamic>;
     final token = body['token'];
-    print(token);
-
     if (token is String) {
-      final config = StompConfig.SockJS(
-        url: jdoodleApiUrl,
-        onWebSocketError: _handleWebsocketError,
-        onConnect: _handleWebsocketConnect,
-        onDisconnect: _handleWebsocketDisconnect,
-        onStompError: (error) => print('stomp error: ${error.body}'),
-      );
-
-      final client = StompClient(config: config)..activate();
-      state = AsyncValue.data(
-        WebsocketModel(
-          client: client,
-          token: token,
-        ),
-      );
+      return token;
     }
+    print(token);
+    return '';
   }
 
-  void disconnectWebsocket() {
+  void reestablishConnection() {
     final websocket = state.value;
     if (websocket != null) {
-      websocket.client.activate();
+      state = AsyncValue.data(WebsocketModel.initial());
+      websocket.client.deactivate();
     }
   }
 
-  void _handleWebsocketConnect(StompFrame frame) {
+  void disconnect() {
+    final websocket = state.value;
+    if (websocket != null) {
+      state = AsyncValue.data(
+        WebsocketModel.initial().copyWith(
+          reconnectOnDisconnect: false,
+        ),
+      );
+      websocket.client.deactivate();
+    }
+  }
+
+  void _handleWebsocketConnected(StompFrame frame) {
     print('websocket connected');
+    // This callback fires after WebsocketModel already initialised.
+    // Just need to change isConnected to true so clients are allowed to use it.
     final prevState = state.value;
     if (prevState != null) {
       state = AsyncValue.data(
@@ -70,15 +89,14 @@ class WebsocketProvider extends StateNotifier<AsyncValue<WebsocketModel>> {
     }
   }
 
-  void _handleWebsocketDisconnect(StompFrame frame) {
-    print('websocket connected');
-    final prevState = state.value;
-    if (prevState != null) {
-      state = AsyncValue.data(
-        prevState.copyWith(
-          isConnected: false,
-        ),
-      );
+  void _handleWebsocketDisconnected() {
+    state = AsyncValue.data(WebsocketModel.initial());
+    final websocket = state.value;
+    if (websocket != null && websocket.reconnectOnDisconnect) {
+      state = AsyncValue.data(WebsocketModel.initial());
+      connectWebsocket();
+    } else {
+      dispose();
     }
   }
 
