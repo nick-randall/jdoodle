@@ -27,7 +27,10 @@ class CodeNotifier extends StateNotifier<CodeModel> {
 
   final Ref ref;
 
-  void sendMessageToServer(String message) {
+  void sendMessageToServer({
+    required String message,
+    required bool input,
+  }) {
     final wsProvider = ref.watch(websocketProvider);
     final websocket = wsProvider.value;
     if (websocket != null && websocket.isConnected) {
@@ -39,7 +42,12 @@ class CodeNotifier extends StateNotifier<CodeModel> {
       websocket.client.send(
         destination: _sendDestination,
         body: data,
-        headers: {'message_type': 'execute', 'token': websocket.token},
+        headers: input
+            ? {'message_type': 'input', 'token': websocket.token}
+            : {
+                'message_type': 'execute',
+                'token': websocket.token,
+              },
       );
     }
   }

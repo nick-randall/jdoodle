@@ -38,19 +38,40 @@ public class MyClass {
 
 	}
 }''';
-      ref.read(codeProvider.notifier).sendMessageToServer(script);
+      ref.read(codeProvider.notifier).sendMessageToServer(
+            message: script,
+            input: false,
+          );
+    }
+
+    void inputText(String input) {
+      print(input);
+      ref.read(codeProvider.notifier).sendMessageToServer(
+            message: input,
+            input: true,
+          );
     }
 
     return MaterialApp(
       home: Scaffold(
           body: Column(children: [
         Text(codeNotifier.text),
+        TextField(
+          onChanged: inputText,
+        ),
         ElevatedButton(
             onPressed: simulateSendMessage,
             child: const SizedBox(
               height: 20,
               width: 50,
-              child: Text("send some code"),
+              child: Text('execute code'),
+            )),
+        ElevatedButton(
+            onPressed: () => inputText("x"),
+            child: const SizedBox(
+              height: 20,
+              width: 50,
+              child: Text('execute code'),
             ))
       ])),
     );
