@@ -1,18 +1,21 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:jdoodle/models/code_model.dart';
 import 'package:jdoodle/providers/web_socket_provider.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
 
 /// This service has the abstract methods for interacting with the websocket
-final websocketServiceProvider =
-    StateNotifierProvider<WebsocketServiceNotifier, CodeModel>(
+final websocketServiceProvider = StateNotifierProvider<WebsocketServiceNotifier,
+    List<void Function(StompFrame message)>>(
   WebsocketServiceNotifier.new,
 );
 
-class WebsocketServiceNotifier extends StateNotifier<CodeModel> {
-  WebsocketServiceNotifier(this.ref) : super(CodeModel(language: 'java')) {
+// typedef Handler
+
+class WebsocketServiceNotifier
+    extends StateNotifier<List<void Function(StompFrame message)>> {
+  WebsocketServiceNotifier(this.ref) : super([]) {
     final wsProvider = ref.watch(websocketProvider);
     final websocket = wsProvider.value;
     if (websocket != null && websocket.isConnected) {
@@ -36,7 +39,7 @@ class WebsocketServiceNotifier extends StateNotifier<CodeModel> {
     if (websocket != null && websocket.isConnected) {
       final data = jsonEncode({
         'script': script,
-        'language': state.language,
+        'language': '',
         'versionIndex': 4,
       });
       websocket.client.send(
@@ -64,20 +67,35 @@ class WebsocketServiceNotifier extends StateNotifier<CodeModel> {
     }
   }
 
+  void addMessageListener(void Function(StompFrame message) function) {
+    state.add(function);
+  }
+
+  void removeMessageListener(void Function(StompFrame message) function) {
+    state.remove(function);
+  }
+
   void handleMessageFromServer(StompFrame message) {
     final messageBody = message.body;
     final statusCodeHeader = message.headers['statusCode'];
     if (statusCodeHeader != null) {
       final statusCode = int.parse(statusCodeHeader);
       if (statusCode == 400 && messageBody == 'Token Expired') {
-        print('Token is Expired! Attempting to re-establish connection');
-        ref.read(websocketProvider.notifier).reestablishConnection();
+        _handleExpiredToken();
+      }
+      if (statusCode == 204) {
+        // Just a number representing time it took to calculate
       }
       print('status code: $statusCode');
     }
+    print(state.length);
+    for (final handler in state) {
+      handler.call(message);
+    }
   }
 
-  // void _handleExpiredToken() {
-  //   ref.read(websocketProvider.notifier).
-  // }
+  void _handleExpiredToken() {
+    print('Token is Expired! Attempting to re-establish connection');
+    ref.read(websocketProvider.notifier).reestablishConnection();
+  }
 }

@@ -13,7 +13,7 @@ class JdoodleApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final codeNotifier = ref.watch(websocketServiceProvider);
+    final codeExecutionNotifier = ref.watch(websocketServiceProvider);
     void simulateSendMessage() {
       const script = '''
 import java.util.Scanner;
@@ -50,8 +50,8 @@ public class MyClass {
 
     return MaterialApp(
       home: Scaffold(
-          body: Column(children: [
-        Text(codeNotifier.text),
+          body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text('nothing'),
         TextField(
           onChanged: inputText,
         ),

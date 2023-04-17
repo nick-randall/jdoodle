@@ -2,21 +2,29 @@ class JdoodleLanguage {
   JdoodleLanguage({
     required this.name,
     required this.code,
-    required this.version,
-    required this.versionIndex,
+    required this.versions,
+    this.currVersion = 0,
   });
 
   final String name;
   final String code;
-  final String version;
-  final String versionIndex;
+  List<String> versions;
+  int currVersion = 0;
+
+  JdoodleLanguage withNewVersion({required int version}) => JdoodleLanguage(
+        name: name,
+        code: code,
+        versions: versions,
+        currVersion: version,
+      );
 }
 
-final languages = <JdoodleLanguage>[
-  JdoodleLanguage(
-    name: 'Java',
-    code: 'java',
-    version: 'JDK 1.8.0_66',
-    versionIndex: '0',
-  )
-];
+final java = JdoodleLanguage(
+  name: 'Java',
+  code: 'java',
+  versions: [
+    'JDK 1.8.0_66',
+  ],
+);
+
+final languages = <JdoodleLanguage>[java];
