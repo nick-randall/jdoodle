@@ -1,7 +1,81 @@
-import '../../language.dart';
+import 'package:jdoodle/language.dart';
+
+final languages = [
+  java,
+  c99,
+  cpp,
+  cpp14,
+  cpp17,
+  php,
+  perl,
+  python2,
+  python3,
+  ruby,
+  go,
+  scala,
+  bash,
+  sql,
+  pascal,
+  csharp,
+  objc,
+  swift,
+  groovy,
+  fortran,
+  brainfuck,
+  lua,
+  tcl,
+  hack,
+  rust,
+  ada,
+  freebasic,
+  verilog,
+  cobol,
+  dart,
+  yabasic,
+  clojure,
+  nodejs,
+  scheme,
+  forth,
+  prolog,
+  octave,
+  coffeescript,
+  icon,
+  fsharp,
+  nasm,
+  gccasm,
+  intercal,
+  nemerle,
+  ocaml,
+  unlambda,
+  picolisp,
+  spidermonkey,
+  rhino,
+  bc,
+  clisp,
+  elixir,
+  factor,
+  falcon,
+  fantom,
+  nim,
+  pike,
+  smalltalk,
+  mozart,
+  lolcode,
+  racket,
+  kotlin,
+  whitespace,
+  erlang,
+  jlang,
+  haxe,
+  fasm,
+  awk,
+  algol,
+  befunge,
+  blockly,
+];
 
 final java = JdoodleLanguage(
-  name: '[object HTMLSpanElement]',
+  name: 'Java',
   code: 'java',
   versions: [
     'JDK 1.8.0_66',
@@ -538,9 +612,9 @@ final scheme = JdoodleLanguage(
   ],
 );
 
-final gforth = JdoodleLanguage(
+final forth = JdoodleLanguage(
   name: 'Forth',
-  code: 'gforth',
+  code: 'forth',
   versions: ['gforth 0.7.3'],
 );
 
@@ -834,16 +908,22 @@ final awk = JdoodleLanguage(
   versions: ['NU Awk 5.1.1, API: 3.1', 'NU Awk 5.1.1, API: 3.1'],
 );
 
+final fasm = JdoodleLanguage(name: 'FASM', code: 'fasm', versions: ['1.73.27']);
+
 final algol = JdoodleLanguage(
   name: 'Algol 68',
   code: 'algol',
   versions: ['Genie 2.8.5', 'Genie 2.8.5'],
 );
 
-final cfunge = JdoodleLanguage(
+final haxe = JdoodleLanguage(name: 'Haxe', code: 'haxe', versions: ['4.2.4']);
+
+final befunge = JdoodleLanguage(
   name: 'Befunge',
-  code: 'cfunge 0.9.0',
-  versions: [],
+  code: 'befunge',
+  versions: [
+    'cfunge 0.9.0',
+  ],
 );
 
 final blockly = JdoodleLanguage(
