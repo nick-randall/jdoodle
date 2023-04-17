@@ -3,20 +3,23 @@ class JdoodleLanguage {
     required this.name,
     required this.code,
     required this.versions,
-    this.currVersion = 0,
+    this.currVersionIndex = 0,
   });
 
   final String name;
   final String code;
   List<String> versions;
-  int currVersion = 0;
+  int currVersionIndex = 0;
 
   JdoodleLanguage withNewVersion({required int version}) => JdoodleLanguage(
         name: name,
         code: code,
         versions: versions,
-        currVersion: version,
+        currVersionIndex: version,
       );
+
+  set version(String version) => currVersionIndex = versions.indexOf(version);
+  String get version => versions[currVersionIndex];
 }
 
 final java = JdoodleLanguage(

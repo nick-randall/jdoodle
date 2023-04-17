@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jdoodle/providers/web_socket_provider.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
 
+import '../language.dart';
+
 /// This service has the abstract methods for interacting with the websocket
 final websocketServiceProvider = StateNotifierProvider<WebsocketServiceNotifier,
     List<void Function(StompFrame message)>>(
@@ -39,8 +41,8 @@ class WebsocketServiceNotifier
     if (websocket != null && websocket.isConnected) {
       final data = jsonEncode({
         'script': script,
-        'language': '',
-        'versionIndex': 4,
+        'language': java.code,
+        'versionIndex': java.currVersionIndex,
       });
       websocket.client.send(
         destination: _sendDestination,
