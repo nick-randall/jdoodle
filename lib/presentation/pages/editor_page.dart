@@ -1,3 +1,4 @@
+import 'package:code_editor/code_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jdoodle/providers/code_editor_provider.dart';
@@ -14,11 +15,14 @@ class _EditorPageState extends ConsumerState<EditorPage> {
   @override
   Widget build(BuildContext context) {
     final language = ref.watch(languageProvider);
-
+    final code = ref.watch(codeProvider);
     return Expanded(
       child: Column(
-        children: [TextField()],
+        children: [_buildTextArea()],
       ),
     );
   }
+
+  Widget _buildTextArea() => Container();
+  Widget _buildBottomMenu() => Container();
 }

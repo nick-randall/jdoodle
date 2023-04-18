@@ -11,13 +11,6 @@ class JdoodleLanguage {
   List<String> versions;
   int currVersionIndex = 0;
 
-  JdoodleLanguage withNewVersion({required int version}) => JdoodleLanguage(
-        name: name,
-        code: code,
-        versions: versions,
-        currVersionIndex: version,
-      );
-
   set version(String version) => currVersionIndex = versions.indexOf(version);
   String get version => versions[currVersionIndex];
 }

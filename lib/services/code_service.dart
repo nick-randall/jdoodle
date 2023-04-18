@@ -1,9 +1,11 @@
-import '../models/code_model.dart';
+import 'package:jdoodle/models/code.dart';
 
 abstract class CodeService {
-  final Stream codeStream;
-
-  CodeService(this.codeStream);
-  Future<void> writeCodeToServer(CodeModel code);
-  CodeModel handleCodeFromServer(CodeModel code);
+  Code? getCode({required String id});
+  Future<void> writeCodeToDevice({
+    required Code code,
+  });
+  Code? getCurrentCode();
+  List<Code> getAllCodes();
+  Future<void> setCurrentCode(Code code);
 }

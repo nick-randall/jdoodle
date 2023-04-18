@@ -1,10 +1,14 @@
 // ignore_for_file: require_trailing_commas
 
+import 'package:code_editor/code_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
+import 'package:jdoodle/presentation/pages/execution_page.dart';
 import 'package:jdoodle/providers/websocket_service_provider.dart';
 
 void main() async {
+  Hive.init('/home');
   runApp(const ProviderScope(child: JdoodleApp()));
 }
 
@@ -49,6 +53,10 @@ public class MyClass {
     }
 
     return MaterialApp(
+      routes: <String, WidgetBuilder>{
+        '/code-editor': (BuildContext context) => CodeEditor(),
+        '/execution-page': (BuildContext context) => const ExecutionPage()
+      },
       home: Scaffold(
           body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text('nothing'),
