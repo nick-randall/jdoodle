@@ -1,13 +1,16 @@
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jdoodle/models/code.dart';
 import 'package:jdoodle/services/code_service.dart';
 
 class HiveCodeService extends CodeService {
   HiveCodeService() {
-    Hive
-      ..openBox<Code>(filesBox)
-      ..openBox<Code>(currFileBox);
+    init();
   }
+  Future<void> init() async {
+    await Hive.openBox<Code>(filesBox);
+    await Hive.openBox<Code>(currFileBox);
+  }
+
   static const filesBox = 'files';
   static const currFileBox = 'currFile';
   static const currFileKey = 'currFileKey';

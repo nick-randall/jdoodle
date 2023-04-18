@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jdoodle/models/code.dart';
 import 'package:jdoodle/providers/web_socket_provider.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
 
@@ -34,15 +35,15 @@ class WebsocketServiceNotifier
   final Ref ref;
 
   void sendExecuteScriptMessageToServer({
-    required String script,
+    required Code code,
   }) {
     final wsProvider = ref.watch(websocketProvider);
     final websocket = wsProvider.value;
     if (websocket != null && websocket.isConnected) {
       final data = jsonEncode({
-        'script': script,
-        'language': java.code,
-        'versionIndex': java.currVersionIndex,
+        'script': code.text,
+        'language': code.language,
+        'versionIndex': code.language.version,
       });
       websocket.client.send(
         destination: _sendDestination,

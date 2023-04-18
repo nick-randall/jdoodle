@@ -8,7 +8,10 @@ import 'package:jdoodle/util/debounce.dart';
 final codeProvider =
     StateNotifierProvider<CodeNotifier, Code>(CodeNotifier.new);
 
-final initialCode = Code(language: languages.first);
+final initialCode = Code(
+  language: languages.first,
+  text: script,
+);
 
 class CodeNotifier extends StateNotifier<Code> {
   CodeNotifier(this.ref) : super(initialCode) {
@@ -38,3 +41,23 @@ class CodeNotifier extends StateNotifier<Code> {
     }
   }
 }
+
+const script = '''
+import java.util.Scanner;
+ import java.util.NoSuchElementException;
+
+public class MyClass {
+ public static void main(String args[]) {
+		Scanner scanner = new Scanner(System.in);
+
+		try {
+		 System.out.println("Type a Line and enter....");
+		String txt = scanner.nextLine();
+		System.out.println("You have typed...");
+		System.out.println(txt);
+		} catch (NoSuchElementException e) {
+		    System.out.println("Type something in the Stdin box above....");
+		}
+
+	}
+}''';

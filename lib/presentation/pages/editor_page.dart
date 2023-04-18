@@ -5,6 +5,8 @@ import 'package:jdoodle/providers/code_editor_provider.dart';
 import 'package:jdoodle/providers/code_execution_provider.dart';
 import 'package:jdoodle/providers/language_provider.dart';
 
+import '../../providers/websocket_service_provider.dart';
+
 class EditorPage extends ConsumerStatefulWidget {
   const EditorPage({super.key});
   @override
@@ -12,17 +14,47 @@ class EditorPage extends ConsumerStatefulWidget {
 }
 
 class _EditorPageState extends ConsumerState<EditorPage> {
+  TextEditingController textEditingController = TextEditingController();
+  @override
+  void initState() {
+    final code = ref.read(codeProvider);
+    // textEditingController = TextEditingController();
+    textEditingController.text = code.text;
+    super.initState();
+  }
+
+  void _handleExecute() {
+    final code = ref.read(codeProvider);
+    ref
+        .read(websocketServiceProvider.notifier)
+        .sendExecuteScriptMessageToServer(
+          code: code,
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final language = ref.watch(languageProvider);
     final code = ref.watch(codeProvider);
-    return Expanded(
-      child: Column(
-        children: [_buildTextArea()],
+
+    // final language = ref.watch(languageProvider);
+    return Scaffold(
+      body: Center(
+        child: Column(
+          children: [
+            Text(code.text),
+            _buildTextArea(),
+            _buildBottomMenu(),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildTextArea() => Container();
+  // Widget _buildTextArea() => CodeEditor(
+  //       textEditingController: textEditingController,
+  //     );
+  Widget _buildTextArea() => TextField(
+        controller: textEditingController,
+      );
   Widget _buildBottomMenu() => Container();
 }
