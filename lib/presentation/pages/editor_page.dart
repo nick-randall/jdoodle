@@ -1,11 +1,9 @@
-import 'package:code_editor/code_editor.dart';
+import 'package:code_text_field/code_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:jdoodle/providers/code_editor_provider.dart';
-import 'package:jdoodle/providers/code_execution_provider.dart';
-import 'package:jdoodle/providers/language_provider.dart';
-
-import '../../providers/websocket_service_provider.dart';
+import 'package:highlight/languages/dart.dart';
+import 'package:jdoodle/providers/code_editor_provider.dart' show codeProvider;
+import 'package:jdoodle/providers/websocket_service_provider.dart';
 
 class EditorPage extends ConsumerStatefulWidget {
   const EditorPage({super.key});
@@ -37,11 +35,12 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     final code = ref.watch(codeProvider);
 
     // final language = ref.watch(languageProvider);
-    return Scaffold(
-      body: Center(
-        child: Column(
+    // return CodeEditor();
+    return SafeArea(
+      child: Scaffold(
+        body: Column(
           children: [
-            Text(code.text),
+            // Text(code.text),
             _buildTextArea(),
             _buildBottomMenu(),
           ],
@@ -50,11 +49,56 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     );
   }
 
-  // Widget _buildTextArea() => CodeEditor(
-  //       textEditingController: textEditingController,
-  //     );
-  Widget _buildTextArea() => TextField(
-        controller: textEditingController,
-      );
-  Widget _buildBottomMenu() => Container();
+  Widget _buildTextArea() {
+    return Container(
+      height: 300,
+      child: CodeEditor(),
+    );
+  }
+
+  Widget _buildBottomMenu() {
+    return Row(
+      children: [
+        Icon(Icons.place),
+      ],
+    );
+  }
+}
+
+class CodeEditor extends StatefulWidget {
+  const CodeEditor({super.key});
+
+  @override
+  _CodeEditorState createState() => _CodeEditorState();
+}
+
+class _CodeEditorState extends State<CodeEditor> {
+  CodeController? _codeController;
+
+  @override
+  void initState() {
+    super.initState();
+    final source = "void main() {\n    print(\"Hello, world!\");\n}";
+    // Instantiate the CodeController
+    _codeController = CodeController(
+      text: source,
+      language: dart,
+      // theme: monokaiSublimeTheme,
+    );
+  }
+
+  @override
+  void dispose() {
+    _codeController?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CodeField(
+      expands: true,
+      controller: _codeController!,
+      textStyle: TextStyle(fontFamily: 'SourceCode'),
+    );
+  }
 }

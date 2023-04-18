@@ -1,6 +1,5 @@
 // ignore_for_file: require_trailing_commas
 
-import 'package:code_editor/code_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -13,7 +12,8 @@ const currFileBox = 'currFile';
 const currFileKey = 'currFileKey';
 void main() async {
   await Hive.initFlutter();
-
+  await Hive.openBox<Code>(filesBox);
+  await Hive.openBox<Code>(currFileBox);
   runApp(const ProviderScope(child: JdoodleApp()));
 }
 
@@ -30,7 +30,7 @@ class JdoodleApp extends ConsumerWidget {
     // }
 
     return MaterialApp(routes: <String, WidgetBuilder>{
-      '/code-editor': (BuildContext context) => CodeEditor(),
+      '/code-editor': (BuildContext context) => EditorPage(),
       '/execution-page': (BuildContext context) => const ExecutionPage()
     }, home: EditorPage());
     //   Scaffold(
