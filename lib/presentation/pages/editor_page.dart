@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:highlight/languages/dart.dart';
 import 'package:jdoodle/providers/code_editor_provider.dart' show codeProvider;
+import 'package:jdoodle/providers/web_socket_provider.dart';
 import 'package:jdoodle/providers/websocket_service_provider.dart';
+import 'package:jdoodle/services/code_execution_service.dart';
+import 'package:jdoodle/services/code_service.dart';
 
 class EditorPage extends ConsumerStatefulWidget {
   const EditorPage({super.key});
@@ -13,21 +16,32 @@ class EditorPage extends ConsumerStatefulWidget {
 
 class _EditorPageState extends ConsumerState<EditorPage> {
   TextEditingController textEditingController = TextEditingController();
+  final executionService = CodeExecutionService();
   @override
   void initState() {
+    print("init");
     final code = ref.read(codeProvider);
     // textEditingController = TextEditingController();
     textEditingController.text = code.text;
+    final websocketServiceNotifier = ref
+        .read(websocketServiceProvider.notifier)
+        .addMessageListener((message) {
+      print("message");
+    });
     super.initState();
   }
 
+  // void _handleExecute() {
+  //   final code = ref.read(codeProvider);
+  //   ref
+  //       .read(websocketServiceProvider.notifier)
+  //       .sendExecuteScriptMessageToServer(
+  //         code: code,
+  //       );
+  // }
   void _handleExecute() {
     final code = ref.read(codeProvider);
-    ref
-        .read(websocketServiceProvider.notifier)
-        .sendExecuteScriptMessageToServer(
-          code: code,
-        );
+    executionService.sendExecuteScriptMessageToServer(code: code);
   }
 
   @override
@@ -50,16 +64,20 @@ class _EditorPageState extends ConsumerState<EditorPage> {
   }
 
   Widget _buildTextArea() {
-    return Container(
-      height: 300,
-      child: CodeEditor(),
+    return Expanded(
+      child: Container(
+        child: const CodeEditor(),
+      ),
     );
   }
 
   Widget _buildBottomMenu() {
     return Row(
       children: [
-        Icon(Icons.place),
+        GestureDetector(
+          onTap: _handleExecute,
+          child: const Icon(Icons.play_arrow),
+        ),
       ],
     );
   }
@@ -83,6 +101,15 @@ class _CodeEditorState extends State<CodeEditor> {
     _codeController = CodeController(
       text: source,
       language: dart,
+      patternMap: {
+        r'".*"': const TextStyle(color: Colors.yellow),
+        r'[a-zA-Z0-9]+\(.*\)': const TextStyle(color: Colors.green),
+      },
+      stringMap: {
+        "void": const TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+        "print":
+            const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+      },
       // theme: monokaiSublimeTheme,
     );
   }
@@ -98,7 +125,7 @@ class _CodeEditorState extends State<CodeEditor> {
     return CodeField(
       expands: true,
       controller: _codeController!,
-      textStyle: TextStyle(fontFamily: 'SourceCode'),
+      textStyle: const TextStyle(fontFamily: 'SourceCode'),
     );
   }
 }

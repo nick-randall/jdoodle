@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jdoodle/models/code.dart';
 import 'package:jdoodle/providers/web_socket_provider.dart';
+import 'package:jdoodle/providers/websocket_service.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
 
 import '../language.dart';
@@ -19,10 +20,15 @@ final websocketServiceProvider = StateNotifierProvider<WebsocketServiceNotifier,
 class WebsocketServiceNotifier
     extends StateNotifier<List<void Function(StompFrame message)>> {
   WebsocketServiceNotifier(this.ref) : super([]) {
-    final wsProvider = ref.watch(websocketProvider);
-    final websocket = wsProvider.value;
-    if (websocket != null && websocket.isConnected) {
-      websocket.client.subscribe(
+    // final wsProvider = ref.watch(websocketProvider);
+    final websocketService = WebsocketService();
+    websocketService.streamController.stream.listen(handleMessageFromServer);
+  }
+
+  Future<void> _initListeners() async {
+    final websocketService = WebsocketService();
+    if (websocketService.websocket.isConnected) {
+      websocketService.websocket.client.subscribe(
         destination: _subscribeDestination,
         callback: handleMessageFromServer,
       );
