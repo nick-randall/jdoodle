@@ -4,8 +4,8 @@ import 'package:jdoodle/models/execution_response.dart';
 import 'package:jdoodle/services/websocket_service.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
 
-class CodeExecutionStream {
-  CodeExecutionStream() {
+class ExecutionResponseStream {
+  ExecutionResponseStream() {
     final websocketService = WebsocketService();
     messageStream = websocketService.streamController;
     executionResponseTransformer =

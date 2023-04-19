@@ -5,7 +5,7 @@ import 'package:highlight/languages/dart.dart';
 import 'package:jdoodle/models/execution_response.dart';
 import 'package:jdoodle/providers/code_editor_provider.dart' show codeProvider;
 import 'package:jdoodle/services/code_execution_service.dart';
-import 'package:jdoodle/services/code_execution_stream.dart';
+import 'package:jdoodle/services/execution_response_stream.dart';
 
 class EditorPage extends ConsumerStatefulWidget {
   const EditorPage({super.key});
@@ -44,7 +44,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
             _buildTextArea(),
             _buildBottomMenu(),
             StreamBuilder(
-              stream: CodeExecutionStream().stream,
+              stream: ExecutionResponseStream().stream,
               builder: (context, AsyncSnapshot<ExecutionResponse> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();
