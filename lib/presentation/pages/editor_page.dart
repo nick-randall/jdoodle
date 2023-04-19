@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:highlight/languages/dart.dart';
 import 'package:jdoodle/providers/code_editor_provider.dart' show codeProvider;
-import 'package:jdoodle/providers/web_socket_provider.dart';
-import 'package:jdoodle/providers/websocket_service_provider.dart';
+import 'package:jdoodle/providers/websocket_message_provider.dart';
 import 'package:jdoodle/services/code_execution_service.dart';
-import 'package:jdoodle/services/code_service.dart';
 
 class EditorPage extends ConsumerStatefulWidget {
   const EditorPage({super.key});
@@ -23,11 +21,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     final code = ref.read(codeProvider);
     // textEditingController = TextEditingController();
     textEditingController.text = code.text;
-    final websocketServiceNotifier = ref
-        .read(websocketServiceProvider.notifier)
-        .addMessageListener((message) {
-      print("message");
-    });
+
     super.initState();
   }
 
@@ -47,6 +41,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
   @override
   Widget build(BuildContext context) {
     final code = ref.watch(codeProvider);
+    final messageStream = ref.read(websocketMessageProvider);
 
     // final language = ref.watch(languageProvider);
     // return CodeEditor();
