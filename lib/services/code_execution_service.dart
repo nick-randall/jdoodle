@@ -21,7 +21,7 @@ class CodeExecutionService {
       final before = {
         'script': code.text,
         'language': code.language.code,
-        'versionIndex': code.language.version,
+        'versionIndex': code.language.currVersionIndex,
       };
       websocket.client.send(
         destination: _sendDestination,

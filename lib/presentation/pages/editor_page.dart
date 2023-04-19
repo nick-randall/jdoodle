@@ -2,8 +2,10 @@ import 'package:code_text_field/code_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:highlight/languages/dart.dart';
+import 'package:jdoodle/models/execution_response.dart';
 import 'package:jdoodle/providers/code_editor_provider.dart' show codeProvider;
 import 'package:jdoodle/providers/websocket_message_provider.dart';
+import 'package:jdoodle/providers/websocket_message_transformer.dart';
 import 'package:jdoodle/services/code_execution_service.dart';
 
 class EditorPage extends ConsumerStatefulWidget {
@@ -41,7 +43,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
   @override
   Widget build(BuildContext context) {
     final code = ref.watch(codeProvider);
-    final messageStream = ref.read(websocketMessageProvider);
+    // final messageStream = ref.read(websocketMessageProvider);
 
     // final language = ref.watch(languageProvider);
     // return CodeEditor();
@@ -52,6 +54,25 @@ class _EditorPageState extends ConsumerState<EditorPage> {
             // Text(code.text),
             _buildTextArea(),
             _buildBottomMenu(),
+            StreamBuilder(
+              stream: WebsocketMessageStream().stream,
+              builder: (context, AsyncSnapshot<ExecutionResponse> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+                final data = snapshot.data;
+                if (data is ComputeTimeExecutionResponse) {
+                  return Text(
+                    data.computeTime.toString(),
+                    style: const TextStyle(fontSize: 50, color: Colors.blue),
+                  );
+                }
+                if (data is StdOutExecutionResponse) {
+                  return Text(data.stdout);
+                }
+                return Text("not compute time");
+              },
+            )
           ],
         ),
       ),
@@ -77,6 +98,20 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     );
   }
 }
+
+// class Weird extends ConsumerWidget {
+//   const Weird({super.key});
+
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     final messageStream = ref.read(websocketMessageProvider);
+
+//     return messageStream.when(
+//         data: (data) => Text(data.body!),
+//         error: (e, s) => Container(),
+//         loading: () => const CircularProgressIndicator());
+//   }
+// }
 
 class CodeEditor extends StatefulWidget {
   const CodeEditor({super.key});

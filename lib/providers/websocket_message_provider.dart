@@ -26,4 +26,11 @@ final websocketMessageProvider = StreamProvider<StompFrame>((ref) async* {
   }
 
   websocketService.streamController.stream.listen(handleMessageFromServer);
+  StompFrame messaged;
+  await for (final message in websocketService.streamController.stream) {
+    // A new message has been received. Let's add it to the list of all messages.
+    // allMessages = [...allMessages, message];
+    messaged = message;
+    yield messaged;
+  }
 });
