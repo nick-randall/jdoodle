@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:jdoodle/models/code.dart';
-import 'package:jdoodle/providers/websocket_service.dart';
+import 'package:jdoodle/services/websocket_service.dart';
 
 class CodeExecutionService {
   static const _sendDestination = '/app/execute-ws-api-token';

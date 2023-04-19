@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:jdoodle/models/execution_response.dart';
-import 'package:jdoodle/providers/websocket_service.dart';
+import 'package:jdoodle/services/websocket_service.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
 
-class WebsocketMessageStream {
-  WebsocketMessageStream() {
+class CodeExecutionStream {
+  CodeExecutionStream() {
     final websocketService = WebsocketService();
     messageStream = websocketService.streamController;
     executionResponseTransformer =

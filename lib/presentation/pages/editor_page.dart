@@ -4,9 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:highlight/languages/dart.dart';
 import 'package:jdoodle/models/execution_response.dart';
 import 'package:jdoodle/providers/code_editor_provider.dart' show codeProvider;
-import 'package:jdoodle/providers/websocket_message_provider.dart';
-import 'package:jdoodle/providers/websocket_message_transformer.dart';
 import 'package:jdoodle/services/code_execution_service.dart';
+import 'package:jdoodle/services/code_execution_stream.dart';
 
 class EditorPage extends ConsumerStatefulWidget {
   const EditorPage({super.key});
@@ -19,22 +18,12 @@ class _EditorPageState extends ConsumerState<EditorPage> {
   final executionService = CodeExecutionService();
   @override
   void initState() {
-    print("init");
     final code = ref.read(codeProvider);
-    // textEditingController = TextEditingController();
     textEditingController.text = code.text;
 
     super.initState();
   }
 
-  // void _handleExecute() {
-  //   final code = ref.read(codeProvider);
-  //   ref
-  //       .read(websocketServiceProvider.notifier)
-  //       .sendExecuteScriptMessageToServer(
-  //         code: code,
-  //       );
-  // }
   void _handleExecute() {
     final code = ref.read(codeProvider);
     executionService.sendExecuteScriptMessageToServer(code: code);
@@ -55,7 +44,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
             _buildTextArea(),
             _buildBottomMenu(),
             StreamBuilder(
-              stream: WebsocketMessageStream().stream,
+              stream: CodeExecutionStream().stream,
               builder: (context, AsyncSnapshot<ExecutionResponse> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();
