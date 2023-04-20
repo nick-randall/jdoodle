@@ -4,6 +4,9 @@ import 'package:jdoodle/models/execution_response.dart';
 import 'package:jdoodle/services/websocket_service.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
 
+// This class's main responsibility is to take the websocket messages
+// from Stomp and convert them into meaningful execution repsonse objects
+// to be consumed by the UI and/or saved.
 class ExecutionResponseStream {
   ExecutionResponseStream() {
     final websocketService = WebsocketService();
@@ -37,6 +40,7 @@ class ExecutionResponseStream {
         );
       } else if (statusCode == 200) {
         sink.add(StdOutExecutionResponse(stdout: messageBody!));
+      } else if (statusCode == 410) {
       } else {
         sink.add(ExecutionResponse());
       }

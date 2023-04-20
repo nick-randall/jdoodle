@@ -71,8 +71,14 @@ class WebsocketService {
   }
 
   void reestablishConnection() {
-    websocket = WebsocketModel.initial();
-    websocket.client.deactivate();
+    if (!websocket.isConnected) {
+      connectWebsocket();
+    } else {
+      // just deactivate and set back to initial,
+      // the websocket client's onClose listener will re-activate the connection
+      websocket.client.deactivate();
+      websocket = WebsocketModel.initial();
+    }
   }
 
   void disconnect() {
@@ -86,6 +92,7 @@ class WebsocketService {
     print('websocket connected');
     // This callback fires after WebsocketModel already initialised.
     // Just need to change isConnected to true so clients are allowed to use it.
+    streamController.add(frame);
     websocket.client.subscribe(
       destination: _subscribeDestination,
       callback: (frame) {
@@ -98,7 +105,6 @@ class WebsocketService {
   void _handleWebsocketDisconnected() {
     websocket = WebsocketModel.initial();
     if (websocket.reconnectOnDisconnect) {
-      websocket = WebsocketModel.initial();
       connectWebsocket();
     }
     // else {
