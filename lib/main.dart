@@ -31,7 +31,7 @@ class JdoodleApp extends ConsumerWidget {
 
     return MaterialApp(routes: <String, WidgetBuilder>{
       '/code-editor': (BuildContext context) => EditorPage(),
-      '/execution-page': (BuildContext context) => ExecutionPage()
+      '/execution-page': (BuildContext context) => NewExecutionPage()
     }, home: EditorPage());
     //   Scaffold(
     //       body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [

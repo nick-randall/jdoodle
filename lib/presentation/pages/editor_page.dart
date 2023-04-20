@@ -48,8 +48,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
   }
 
   Widget _buildTextArea() {
-    return Expanded(
-      child: const CodeEditor(),
+    return const Expanded(
+      child: CodeEditor(),
     );
   }
 

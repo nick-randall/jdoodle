@@ -5,16 +5,23 @@ class ExecutionResponse extends Equatable {
   List<Object?> get props => [];
 }
 
-class StdOutExecutionResponse extends ExecutionResponse {
-  StdOutExecutionResponse({required this.stdout});
+class AwaitingUserInputResponse extends ExecutionResponse {
+  AwaitingUserInputResponse({required this.stdout});
   final String stdout;
   @override
   List<Object?> get props => [stdout];
 }
 
-class ComputeTimeExecutionResponse extends ExecutionResponse {
-  ComputeTimeExecutionResponse({required this.computeTime});
+class EndOfExecutionsResponse extends ExecutionResponse {
+  EndOfExecutionsResponse({required this.computeTime});
   final double computeTime;
   @override
   List<Object?> get props => [computeTime];
+}
+
+class RequestReceivedResponse extends ExecutionResponse {
+  RequestReceivedResponse();
+  // final double computeTime;
+  @override
+  List<Object?> get props => [];
 }
