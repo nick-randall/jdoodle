@@ -28,13 +28,3 @@ class JdoodleLanguage {
     );
   }
 }
-
-final java = JdoodleLanguage(
-  name: 'Java',
-  code: 'java',
-  versions: [
-    'JDK 1.8.0_66',
-  ],
-);
-
-final languages = <JdoodleLanguage>[java];

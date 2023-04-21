@@ -5,6 +5,8 @@ import 'package:jdoodle/services/code_service.dart';
 import 'package:jdoodle/services/hive_code_service.dart';
 import 'package:jdoodle/util/debounce.dart';
 
+import '../constants/languages.dart';
+
 final codeProvider =
     StateNotifierProvider<CodeNotifier, Code>(CodeNotifier.new);
 

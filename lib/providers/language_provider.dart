@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jdoodle/language.dart';
 
+import '../constants/languages.dart';
+
 final languageProvider =
     StateNotifierProvider<LanguageNotifier, JdoodleLanguage>(
   (ref) => LanguageNotifier(),

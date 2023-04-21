@@ -8,4 +8,8 @@ class TextStyles {
     fontSize: 18,
     fontFamily: 'RobotoMono',
   );
+  static const codeEditor = TextStyle(
+    fontFamily: 'RobotoMono',
+    fontSize: 12,
+  );
 }

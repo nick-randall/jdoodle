@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:highlight/languages/dart.dart';
 import 'package:jdoodle/constants/icons.dart';
+import 'package:jdoodle/constants/text_styles.dart';
+import 'package:jdoodle/models/code.dart';
 import 'package:jdoodle/providers/code_editor_provider.dart' show codeProvider;
 import 'package:jdoodle/services/code_execution_service.dart';
 
@@ -31,12 +33,13 @@ class _EditorPageState extends ConsumerState<EditorPage> {
 
   @override
   Widget build(BuildContext context) {
+    final code = ref.watch(codeProvider);
     return SafeArea(
       child: Scaffold(
         body: Column(
           children: [
             _buildTextArea(),
-            _buildBottomMenu(),
+            _buildBottomMenu(code),
           ],
         ),
       ),
@@ -49,12 +52,24 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     );
   }
 
-  Widget _buildBottomMenu() {
+  Widget _buildBottomMenu(Code code) {
     return Row(
       children: [
         IconButton(
           onPressed: _handleExecute,
           icon: playIcon,
+        ),
+        Column(
+          children: [
+            Text(
+              code.language.name,
+              style: TextStyles.header.copyWith(color: Colors.black),
+            ),
+            Text(
+              code.language.version,
+              style: TextStyles.header.copyWith(color: Colors.black),
+            ),
+          ],
         ),
         IconButton(
           onPressed: _handleExecute,
@@ -112,9 +127,7 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
   Widget build(BuildContext context) {
     return CodeField(
       controller: _codeController!,
-      textStyle: const TextStyle(
-        fontFamily: 'RobotoMono',
-      ),
+      textStyle: TextStyles.codeEditor,
     );
   }
 }
