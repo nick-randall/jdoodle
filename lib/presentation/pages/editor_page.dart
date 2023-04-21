@@ -35,7 +35,6 @@ class _EditorPageState extends ConsumerState<EditorPage> {
       child: Scaffold(
         body: Column(
           children: [
-            // Text(code.text),
             _buildTextArea(),
             _buildBottomMenu(),
           ],
@@ -83,6 +82,7 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
     _codeController = CodeController(
       text: code.text,
       language: dart,
+
       patternMap: {
         '".*"': const TextStyle(color: Colors.yellow),
         r'[a-zA-Z0-9]+\(.*\)': const TextStyle(color: Colors.green),
@@ -111,9 +111,10 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
   @override
   Widget build(BuildContext context) {
     return CodeField(
-      expands: true,
       controller: _codeController!,
-      textStyle: const TextStyle(fontFamily: 'SourceCode'),
+      textStyle: const TextStyle(
+        fontFamily: 'RobotoMono',
+      ),
     );
   }
 }

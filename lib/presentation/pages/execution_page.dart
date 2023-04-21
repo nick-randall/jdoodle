@@ -67,7 +67,7 @@ class _ExecutionPageState extends ConsumerState<ExecutionPage> {
         children: [
           const Text(
             'Run',
-            style: TextStyles.body,
+            style: TextStyles.header,
           ),
           Row(
             children: const [
@@ -147,17 +147,17 @@ class _SuccessScreen extends ConsumerState<SuccessScreen> {
             ),
           ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8),
           child: Text(
             widget.state.stdout,
-            style: TextStyles.body,
+            style: TextStyles.codeOutput,
           ),
         ),
         if (widget.state.awaitingUserInput)
           TextField(
             controller: controller,
             focusNode: focusNode,
-            style: TextStyles.body,
+            style: TextStyles.codeOutput,
             onEditingComplete: () => executionService.sendInputMessageToServer(
               input: '${controller.text} \n',
             ),

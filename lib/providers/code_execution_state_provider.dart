@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jdoodle/models/execution_response.dart';
-import 'package:jdoodle/models/new_code_execution_state.dart';
 import 'package:jdoodle/services/execution_response_stream.dart';
 
 final codeExecutionStateProvider =
@@ -22,7 +21,6 @@ class CodeExecutionStateNotifier extends StateNotifier<NewExecutionState> {
   void resetState() => state = LoadingState();
 
   void _handleResponse(ExecutionResponse response) {
-    print(response.runtimeType);
     if (response is RequestReceivedResponse) {
       state = ServerAcknowledgedReceiptState();
     }
@@ -30,7 +28,6 @@ class CodeExecutionStateNotifier extends StateNotifier<NewExecutionState> {
       state = StdOutReceived(stdout: response.stdout);
     }
     if (response is EndOfExecutionsResponse) {
-      print(response.computeTime);
       final prevState = state;
       if (prevState is StdOutReceived) {
         state = ExecutionComplete(
@@ -44,7 +41,6 @@ class CodeExecutionStateNotifier extends StateNotifier<NewExecutionState> {
         );
       }
     }
-    print(state);
   }
 }
 

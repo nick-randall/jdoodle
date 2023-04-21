@@ -61,7 +61,7 @@ public class MyClass {
 		System.out.println(txt);
 		} catch (NoSuchElementException e) {
 		    System.out.println("Type something in the Stdin box above....");
-		}
+		
 
 	}
 }''';

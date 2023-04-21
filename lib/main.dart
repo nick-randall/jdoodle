@@ -24,6 +24,7 @@ class JdoodleApp extends ConsumerWidget {
         '/execution-page': (BuildContext context) => const ExecutionPage()
       },
       home: const EditorPage(),
+      theme: ThemeData(textTheme: Typography.whiteMountainView),
     );
   }
 }
