@@ -3,9 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jdoodle/constants/colors.dart';
 import 'package:jdoodle/constants/icons.dart';
 import 'package:jdoodle/constants/text_stlyes.dart';
-import 'package:jdoodle/models/code_execution_state.dart';
 import 'package:jdoodle/providers/code_execution_state_provider.dart';
-import 'package:jdoodle/providers/execution_provider.dart';
 import 'package:jdoodle/services/code_execution_service.dart';
 
 class NewExecutionPage extends ConsumerStatefulWidget {
@@ -19,11 +17,15 @@ class NewExecutionPage extends ConsumerStatefulWidget {
 class _NewExecutionPageState extends ConsumerState<NewExecutionPage> {
   _NewExecutionPageState();
   final focusNode = FocusNode();
-
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(codeExecutionStateProvider.notifier).resetState();
+    });
+    ref.read(codeExecutionStateProvider.notifier).addListener((state) {
+      if (state is SuccessState && state.awaitingUserInput) {
+        focusNode.requestFocus();
+      }
     });
 
     super.initState();
@@ -50,11 +52,9 @@ class _NewExecutionPageState extends ConsumerState<NewExecutionPage> {
                         executionState,
                       ),
                     if (executionState is SuccessState)
-                      _buildSuccessState(
-                        executionState,
-                        executionService,
-                        focusNode,
-                      ),
+                      // _buildSuccessState(executionState, executionService,
+                      //     focusNode, controller),
+                      SuccessScreen(state: executionState),
                   ],
                 ),
         ),
@@ -103,31 +103,68 @@ class _NewExecutionPageState extends ConsumerState<NewExecutionPage> {
   Widget _buildExecutionErrorState(ExecutionErrorState state) {
     return Text(state.errorMessage);
   }
+}
 
-  Widget _buildSuccessState(
-    SuccessState state,
-    CodeExecutionService executionService,
-    FocusNode focusNode,
-  ) {
-    return Column(children: [
-      Text(
-        state.stdout,
-        style: TextStyles.body,
-      ),
-      if (state.executionTime != null)
-        Text(
-          '${state.stdout} in ${state.executionTime}s',
-          style: TextStyles.body,
+class SuccessScreen extends ConsumerStatefulWidget {
+  const SuccessScreen({
+    required this.state,
+    super.key,
+  });
+  final SuccessState state;
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _SuccessScreen();
+}
+
+class _SuccessScreen extends ConsumerState<SuccessScreen> {
+  final executionService = CodeExecutionService();
+  final focusNode = FocusNode();
+  final controller = TextEditingController();
+  @override
+  void initState() {
+    ref.read(codeExecutionStateProvider.notifier).addListener((state) {
+      if (state is SuccessState && state.awaitingUserInput) {
+        focusNode.requestFocus();
+      }
+    });
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        if (widget.state.executionTime != null)
+          Container(
+            width: double.infinity,
+            color: AppColors.secondaryBackgroudColor,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Text(
+                  'Executed in ${widget.state.executionTime}s',
+                  style: TextStyles.body,
+                ),
+              ),
+            ),
+          ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            widget.state.stdout,
+            style: TextStyles.body,
+          ),
         ),
-      if (state.awaitingUserInput)
-        TextField(
+        if (widget.state.awaitingUserInput)
+          TextField(
+            controller: controller,
             focusNode: focusNode,
             style: TextStyles.body,
-            onEditingComplete: () =>
-                executionService.sendInputMessageToServer(input: '\n'),
-            // onEditingComplete: ,
-            onChanged: (value) =>
-                executionService.sendInputMessageToServer(input: value))
-    ]);
+            onEditingComplete: () => executionService.sendInputMessageToServer(
+              input: '${controller.text} \n',
+            ),
+          )
+      ],
+    );
   }
 }

@@ -17,7 +17,9 @@ class CodeExecutionService {
   Code? cachedExecutionAttempt;
 
   void _websocketReconnectHandler(StompFrame event) {
-    if (event.command == 'CONNECTED' && cachedExecutionAttempt != null) {
+    if (event.command == 'CONNECTED' &&
+        cachedExecutionAttempt != null &&
+        websocketService.websocket.isConnected) {
       print("attempting to run cached execution");
       sendExecuteScriptMessageToServer(code: cachedExecutionAttempt!);
       cachedExecutionAttempt = null;
