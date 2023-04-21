@@ -5,6 +5,7 @@ import 'package:jdoodle/constants/icons.dart';
 import 'package:jdoodle/constants/text_styles.dart';
 import 'package:jdoodle/providers/code_execution_state_provider.dart';
 import 'package:jdoodle/services/code_execution_service.dart';
+import 'package:jdoodle/services/websocket_service.dart';
 
 class ExecutionPage extends ConsumerStatefulWidget {
   const ExecutionPage({super.key});
@@ -34,30 +35,23 @@ class _ExecutionPageState extends ConsumerState<ExecutionPage> {
   Widget build(BuildContext context) {
     final executionState = ref.watch(codeExecutionStateProvider);
     return SafeArea(
-      child: Scaffold(
-        appBar: _buildAppBarRow(),
-        body: Container(
-          color: AppColors.backgroundColor,
-          width: double.infinity,
-          child: executionState is LoadingState
-              ? _buildLoadingState(
-                  executionState,
-                )
-              : Column(
-                  children: [
-                    if (executionState is ExecutionErrorState)
-                      _buildExecutionErrorState(
-                        executionState,
-                      ),
-                    if (executionState is SuccessState)
-                      // _buildSuccessState(executionState, executionService,
-                      //     focusNode, controller),
-                      SuccessScreen(state: executionState),
-                  ],
-                ),
-        ),
-      ),
-    );
+        child: Scaffold(
+            appBar: _buildAppBarRow(),
+            body: Container(
+              color: AppColors.backgroundColor,
+              width: double.infinity,
+              child: Builder(builder: (context) {
+                if (executionState is LoadingState) {
+                  return _buildLoadingState(
+                    executionState,
+                  );
+                } else if (executionState is ExecutionErrorState) {
+                  return _buildExecutionErrorState(executionState);
+                } else {
+                  return SuccessScreen(state: executionState as SuccessState);
+                }
+              }),
+            )));
   }
 
   PreferredSizeWidget _buildAppBarRow() {
@@ -99,7 +93,34 @@ class _ExecutionPageState extends ConsumerState<ExecutionPage> {
   }
 
   Widget _buildExecutionErrorState(ExecutionErrorState state) {
-    return Text(state.errorMessage);
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          state.errorMessage,
+          style: TextStyles.header,
+        ),
+        GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+            WebsocketService().reestablishConnection();
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+              ),
+              Text(
+                'Go back',
+                style: TextStyles.header,
+              ),
+            ],
+          ),
+        )
+      ],
+    );
   }
 }
 

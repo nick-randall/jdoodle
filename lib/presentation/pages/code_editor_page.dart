@@ -5,18 +5,22 @@ import 'package:highlight/languages/dart.dart';
 import 'package:jdoodle/constants/icons.dart';
 import 'package:jdoodle/constants/text_styles.dart';
 import 'package:jdoodle/models/code.dart';
+import 'package:jdoodle/presentation/widgets/menu_drawer.dart';
 import 'package:jdoodle/providers/code_editor_provider.dart' show codeProvider;
 import 'package:jdoodle/services/code_execution_service.dart';
 
-class EditorPage extends ConsumerStatefulWidget {
-  const EditorPage({super.key});
+class CodeEditorPage extends ConsumerStatefulWidget {
+  const CodeEditorPage({super.key});
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _EditorPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _CodeEditorPageState();
 }
 
-class _EditorPageState extends ConsumerState<EditorPage> {
+class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
   TextEditingController textEditingController = TextEditingController();
   final executionService = CodeExecutionService();
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     final code = ref.read(codeProvider);
@@ -31,11 +35,17 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     Navigator.pushNamed(context, '/execution-page');
   }
 
+  void _openMenuDrawer() {
+    _scaffoldKey.currentState?.openDrawer();
+  }
+
   @override
   Widget build(BuildContext context) {
     final code = ref.watch(codeProvider);
     return SafeArea(
       child: Scaffold(
+        key: _scaffoldKey,
+        drawer: MenuDrawer(),
         body: Column(
           children: [
             _buildTextArea(),
@@ -54,10 +64,11 @@ class _EditorPageState extends ConsumerState<EditorPage> {
 
   Widget _buildBottomMenu(Code code) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-          onPressed: _handleExecute,
-          icon: playIcon,
+          onPressed: _openMenuDrawer,
+          icon: menuIcon,
         ),
         Column(
           children: [
@@ -71,9 +82,17 @@ class _EditorPageState extends ConsumerState<EditorPage> {
             ),
           ],
         ),
-        IconButton(
-          onPressed: _handleExecute,
-          icon: playIcon,
+        Row(
+          children: [
+            IconButton(
+              onPressed: _handleExecute,
+              icon: playIcon,
+            ),
+            IconButton(
+              onPressed: _handleExecute,
+              icon: filterIcon,
+            ),
+          ],
         ),
       ],
     );

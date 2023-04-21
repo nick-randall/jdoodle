@@ -5,7 +5,7 @@ import 'package:jdoodle/constants/keys.dart';
 import 'package:jdoodle/constants/languages.dart';
 import 'package:jdoodle/constants/scripts.dart';
 import 'package:jdoodle/models/code.dart';
-import 'package:jdoodle/presentation/pages/editor_page.dart';
+import 'package:jdoodle/presentation/pages/code_editor_page.dart';
 import 'package:jdoodle/presentation/pages/execution_page.dart';
 
 void main() async {
@@ -22,10 +22,10 @@ class JdoodleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: <String, WidgetBuilder>{
-        '/code-editor': (BuildContext context) => const EditorPage(),
+        '/code-editor': (BuildContext context) => const CodeEditorPage(),
         '/execution-page': (BuildContext context) => const ExecutionPage()
       },
-      home: const EditorPage(),
+      home: const CodeEditorPage(),
       theme: ThemeData(textTheme: Typography.whiteMountainView),
     );
   }

@@ -929,5 +929,5 @@ final befunge = JdoodleLanguage(
 final blockly = JdoodleLanguage(
   name: 'Blockly',
   code: 'blockly',
-  versions: ['standard'],
+  versions: ['1.0'],
 );

@@ -27,6 +27,9 @@ class CodeExecutionStateNotifier extends StateNotifier<NewExecutionState> {
     if (response is StdOutReceivedResponse) {
       state = StdOutReceived(stdout: response.stdout);
     }
+    if (response is ErrorResponse) {
+      state = ExecutionErrorState();
+    }
     if (response is EndOfExecutionsResponse) {
       final prevState = state;
       if (prevState is StdOutReceived) {

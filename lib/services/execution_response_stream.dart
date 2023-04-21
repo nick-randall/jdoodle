@@ -43,8 +43,8 @@ class ExecutionResponseStream {
             computeTime: double.parse(messageBody!),
           ),
         );
-      } else {
-        sink.add(ExecutionResponse());
+      } else if (statusCode == 503) {
+        sink.add(ErrorResponse());
       }
       print('status code: $statusCode');
     }

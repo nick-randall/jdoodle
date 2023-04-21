@@ -25,3 +25,10 @@ class RequestReceivedResponse extends ExecutionResponse {
   @override
   List<Object?> get props => [];
 }
+
+class ErrorResponse extends ExecutionResponse {
+  ErrorResponse();
+  // final double computeTime;
+  @override
+  List<Object?> get props => [];
+}
