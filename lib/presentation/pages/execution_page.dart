@@ -1,117 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jdoodle/constants/colors.dart';
 import 'package:jdoodle/constants/icons.dart';
 import 'package:jdoodle/constants/text_styles.dart';
-import 'package:jdoodle/models/execution_response.dart';
-import 'package:jdoodle/providers/execution_provider.dart';
-import 'package:jdoodle/services/execution_response_stream.dart';
-import 'package:jdoodle/services/new_execution_response_stream.dart';
+import 'package:jdoodle/providers/code_execution_state_provider.dart';
+import 'package:jdoodle/services/code_execution_service.dart';
 
-class ExecutionPage extends StatelessWidget {
-  ExecutionPage({super.key});
-  final executionResponseStream = ExecutionResponseStream();
+class ExecutionPage extends ConsumerStatefulWidget {
+  const ExecutionPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: _buildAppBarRow(),
-        body: StreamBuilder(
-          stream: executionResponseStream.stream,
-          builder: (context, AsyncSnapshot<ExecutionResponse> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
-            final data = snapshot.data;
-            if (data is EndOfExecutionsResponse) {
-              return Text(
-                data.computeTime.toString(),
-                style: const TextStyle(fontSize: 50, color: Colors.blue),
-              );
-            }
-            if (data is StdOutReceivedResponse) {
-              return Text(data.stdout);
-            }
-            return const Text("not compute time");
-          },
-        ),
-      ),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBarRow() {
-    return AppBar(
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text('Run'),
-          Row(
-            children: const [
-              playIcon,
-              SizedBox(
-                width: 8,
-              ),
-              filterIcon
-            ],
-          )
-        ],
-      ),
-      // leading: Text('run'),
-      backgroundColor: Colors.black,
-    );
-  }
+  ConsumerState<ConsumerStatefulWidget> createState() => _ExecutionPageState();
 }
 
-class NewExecutionPage extends StatefulWidget {
-  NewExecutionPage({super.key});
-
-  @override
-  State<NewExecutionPage> createState() => _NewExecutionPageState();
-}
-
-class _NewExecutionPageState extends State<NewExecutionPage> {
-  late NewExecutionResponseStream executionResponseStream;
+class _ExecutionPageState extends ConsumerState<ExecutionPage> {
+  _ExecutionPageState();
+  final focusNode = FocusNode();
   @override
   void initState() {
-    executionResponseStream = NewExecutionResponseStream();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(codeExecutionStateProvider.notifier).resetState();
+    });
+    ref.read(codeExecutionStateProvider.notifier).addListener((state) {
+      if (state is SuccessState && state.awaitingUserInput) {
+        focusNode.requestFocus();
+      }
+    });
+
     super.initState();
   }
 
   @override
-  void dispose() {
-    // executionResponseStream.stream
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final executionState = ref.watch(codeExecutionStateProvider);
     return SafeArea(
       child: Scaffold(
         appBar: _buildAppBarRow(),
-        body: ColoredBox(
-          color: Colors.black,
-          child: StreamBuilder(
-            stream: executionResponseStream.stream,
-            builder: (context, AsyncSnapshot<ExecutionState> snapshot) {
-              final data = snapshot.data;
-              final d = data?.awaitingUserResponse ?? false;
-              return Column(
-                children: [
-                  if (snapshot.connectionState == ConnectionState.waiting)
-                    _buildLoadingBody(),
-                  Text(
-                      style: TextStyles.body,
-                      '${d ? 'awaiting response' : 'not awaiting response'}, ${data?.body}, ${data?.executionTime} '),
-                  if (data != null && data.awaitingUserResponse)
-                    _buildStdInput(),
-                  if (data != null && !data.awaitingUserResponse)
-                    Text(
-                      data.body,
-                      style: TextStyles.body,
-                    ),
-                ],
-              );
-            },
-          ),
+        body: Container(
+          color: AppColors.backgroundColor,
+          width: double.infinity,
+          child: executionState is LoadingState
+              ? _buildLoadingState(
+                  executionState,
+                )
+              : Column(
+                  children: [
+                    if (executionState is ExecutionErrorState)
+                      _buildExecutionErrorState(
+                        executionState,
+                      ),
+                    if (executionState is SuccessState)
+                      // _buildSuccessState(executionState, executionService,
+                      //     focusNode, controller),
+                      SuccessScreen(state: executionState),
+                  ],
+                ),
         ),
       ),
     );
@@ -142,20 +85,83 @@ class _NewExecutionPageState extends State<NewExecutionPage> {
     );
   }
 
-  Widget _buildLoadingBody() {
-    return const CircularProgressIndicator();
-  }
-
-  Widget _buildStdInput() {
+  Widget _buildLoadingState(LoadingState state) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          'STDIN',
+          state.waitMessage,
           style: TextStyles.body,
         ),
-        TextField(
-          style: TextStyles.body,
+        const CircularProgressIndicator(),
+      ],
+    );
+  }
+
+  Widget _buildExecutionErrorState(ExecutionErrorState state) {
+    return Text(state.errorMessage);
+  }
+}
+
+class SuccessScreen extends ConsumerStatefulWidget {
+  const SuccessScreen({
+    required this.state,
+    super.key,
+  });
+  final SuccessState state;
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _SuccessScreen();
+}
+
+class _SuccessScreen extends ConsumerState<SuccessScreen> {
+  final executionService = CodeExecutionService();
+  final focusNode = FocusNode();
+  final controller = TextEditingController();
+  @override
+  void initState() {
+    ref.read(codeExecutionStateProvider.notifier).addListener((state) {
+      if (state is SuccessState && state.awaitingUserInput) {
+        focusNode.requestFocus();
+      }
+    });
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        if (widget.state.executionTime != null)
+          Container(
+            width: double.infinity,
+            color: AppColors.secondaryBackgroudColor,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Text(
+                  'Executed in ${widget.state.executionTime}s',
+                  style: TextStyles.body,
+                ),
+              ),
+            ),
+          ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            widget.state.stdout,
+            style: TextStyles.body,
+          ),
         ),
+        if (widget.state.awaitingUserInput)
+          TextField(
+            controller: controller,
+            focusNode: focusNode,
+            style: TextStyles.body,
+            onEditingComplete: () => executionService.sendInputMessageToServer(
+              input: '${controller.text} \n',
+            ),
+          )
       ],
     );
   }

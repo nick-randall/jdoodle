@@ -31,7 +31,6 @@ class _EditorPageState extends ConsumerState<EditorPage> {
 
   @override
   Widget build(BuildContext context) {
-    final code = ref.watch(codeProvider);
     return SafeArea(
       child: Scaffold(
         body: Column(
@@ -54,9 +53,13 @@ class _EditorPageState extends ConsumerState<EditorPage> {
   Widget _buildBottomMenu() {
     return Row(
       children: [
-        GestureDetector(
-          onTap: _handleExecute,
-          child: playIcon,
+        IconButton(
+          onPressed: _handleExecute,
+          icon: playIcon,
+        ),
+        IconButton(
+          onPressed: _handleExecute,
+          icon: playIcon,
         ),
       ],
     );
@@ -76,8 +79,6 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
   @override
   void initState() {
     super.initState();
-    var source = "void main() {\n    print(\"Hello, world!\");\n}";
-    // Instantiate the CodeController
     final code = ref.read(codeProvider);
     _codeController = CodeController(
       text: code.text,
