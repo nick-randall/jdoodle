@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jdoodle/constants/scripts.dart';
 import 'package:jdoodle/language.dart';
 import 'package:jdoodle/models/code.dart';
 import 'package:jdoodle/services/code_service.dart';
@@ -11,7 +12,7 @@ final codeProvider =
     StateNotifierProvider<CodeNotifier, Code>(CodeNotifier.new);
 
 final initialCode = Code(
-  language: languages.first.copyWith(currVersionIndex: 4),
+  language: languages.last.copyWith(currVersionIndex: 0),
   text: script,
 );
 
@@ -22,7 +23,14 @@ class CodeNotifier extends StateNotifier<Code> {
   final Ref ref;
   final CodeService codeService = HiveCodeService();
 
-  set language(JdoodleLanguage language) => state.language = language;
+  set language(JdoodleLanguage language) {
+    state.language = language;
+    final snippet = codeSnippets[language.code];
+    if (snippet != null) {
+      state.text = snippet;
+    }
+  }
+
   JdoodleLanguage get language => state.language;
 
   set version(String version) => state = state..language.version = version;
@@ -63,7 +71,7 @@ public class MyClass {
 		System.out.println(txt);
 		} catch (NoSuchElementException e) {
 		    System.out.println("Type something in the Stdin box above....");
-		
+		}
 
 	}
 }''';

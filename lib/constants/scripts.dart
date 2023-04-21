@@ -415,4 +415,140 @@ read input
 echo "You typed this line:"
 echo $input
 ''',
+  'java': '''
+import java.util.Scanner;
+
+class Main {
+  public static void main(String[] args) {
+    Scanner scanner = new Scanner(System.in);
+    System.out.print("Enter a line: ");
+    String line = scanner.nextLine();
+    System.out.println("You typed this line: " + line);
+  }
+}''',
+  'c99': '''
+#include <stdio.h>
+
+int main(void) {
+  char line[256];
+  printf("Enter a line: ");
+  fgets(line, sizeof(line), stdin);
+  printf("You typed this line: %s", line);
+  return 0;
+}''',
+  'cpp': '''
+#include <iostream>
+#include <string>
+
+int main() {
+  std::string line;
+  std::cout << "Enter a line: ";
+  std::getline(std::cin, line);
+  std::cout << "You typed this line: " << line << std::endl;
+  return 0;
+}''',
+  'cpp14': '''
+#include <iostream>
+#include <string>
+
+int main() {
+  std::string line;
+  std::cout << "Enter a line: ";
+  std::getline(std::cin, line);
+  std::cout << "You typed this line: " << line << std::endl;
+  return 0;
+}''',
+  'cpp17': '''
+#include <iostream>
+#include <string>
+
+int main() {
+  std::string line;
+  std::cout << "Enter a line: ";
+  std::getline(std::cin, line);
+  std::cout << "You typed this line: " << line << std::endl;
+  return 0;
+}''',
+  'fpc-3.2.2': '''
+program HelloWorld;
+var
+  line: String;
+begin
+  Write('Enter a line: ');
+  ReadLn(line);
+  WriteLn('You typed this line: ', line);
+end. ''',
+  'csharp': '''
+using System;
+
+class Program {
+  static void Main(string[] args) {
+    Console.Write("Enter a line: ");
+    string line = Console.ReadLine();
+    Console.WriteLine("You typed this line: " + line);
+  }
+}''',
+  'objc': '''
+#import <Foundation/Foundation.h>
+
+int main() {
+  @autoreleasepool {
+    char line[256];
+    NSLog(@"Enter a line: ");
+    fgets(line, sizeof(line), stdin);
+    NSLog(@"You typed this line: %s", line);
+  }
+  return 0;
+}''',
+  'yabasic': r'''
+input "Enter a line: ", line$
+print "You typed this line: " + line$
+''',
+  'clojure': '''
+(defn -main []
+  (print "Enter a line: ")
+  (flush)
+  (let [line (read-line)]
+    (println "You typed this line: " line)))''',
+  'nodejs': '''
+const readline = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+rl.question('Enter a line: ', (line) => {
+  console.log('You typed this line: ' + line);
+  rl.close();
+});''',
+  'scheme': '''
+(display "Enter a line: ")
+(newline)
+(let ((line (read)))
+  (display "You typed this line: ")
+  (display line)
+  (newline))''',
+  'forth': '''
+." Enter a line: "
+cr
+s" " parse cr
+." You typed this line: " type cr''',
+
+  'prolog': '''
+main :- read_line(Line), format("You typed this line: ~s", [Line]).
+''',
+
+  'octave': '''
+line = input("Enter a line: ", "s");
+disp(["You typed this line: " line]);
+''',
+
+  'coffeescript': '''
+console.log("Enter a line: ");
+process.stdin.on 'data', (line) ->
+  console.log "You
+
+
+};''',
 };
