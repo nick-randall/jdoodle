@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:highlight/languages/dart.dart';
 import 'package:jdoodle/constants/icons.dart';
-import 'package:jdoodle/models/execution_response.dart';
 import 'package:jdoodle/providers/code_editor_provider.dart' show codeProvider;
 import 'package:jdoodle/services/code_execution_service.dart';
-import 'package:jdoodle/services/execution_response_stream.dart';
 
 class EditorPage extends ConsumerStatefulWidget {
   const EditorPage({super.key});
@@ -65,35 +63,42 @@ class _EditorPageState extends ConsumerState<EditorPage> {
   }
 }
 
-class CodeEditor extends StatefulWidget {
+class CodeEditor extends ConsumerStatefulWidget {
   const CodeEditor({super.key});
 
   @override
   _CodeEditorState createState() => _CodeEditorState();
 }
 
-class _CodeEditorState extends State<CodeEditor> {
+class _CodeEditorState extends ConsumerState<CodeEditor> {
   CodeController? _codeController;
 
   @override
   void initState() {
     super.initState();
-    final source = "void main() {\n    print(\"Hello, world!\");\n}";
+    var source = "void main() {\n    print(\"Hello, world!\");\n}";
     // Instantiate the CodeController
+    final code = ref.read(codeProvider);
     _codeController = CodeController(
-      text: source,
+      text: code.text,
       language: dart,
       patternMap: {
-        r'".*"': const TextStyle(color: Colors.yellow),
+        '".*"': const TextStyle(color: Colors.yellow),
         r'[a-zA-Z0-9]+\(.*\)': const TextStyle(color: Colors.green),
       },
       stringMap: {
-        "void": const TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
-        "print":
+        'void': const TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+        'print':
             const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
       },
       // theme: monokaiSublimeTheme,
     );
+    _codeController?.addListener(() {
+      final text = _codeController?.text;
+      if (text != null) {
+        ref.read(codeProvider.notifier).updateCode(text);
+      }
+    });
   }
 
   @override

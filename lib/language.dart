@@ -13,6 +13,20 @@ class JdoodleLanguage {
 
   set version(String version) => currVersionIndex = versions.indexOf(version);
   String get version => versions[currVersionIndex];
+
+  JdoodleLanguage copyWith({
+    String? name,
+    String? code,
+    List<String>? versions,
+    int? currVersionIndex,
+  }) {
+    return JdoodleLanguage(
+      name: name ?? this.name,
+      code: code ?? this.code,
+      versions: versions ?? this.versions,
+      currVersionIndex: currVersionIndex ?? this.currVersionIndex,
+    );
+  }
 }
 
 final java = JdoodleLanguage(

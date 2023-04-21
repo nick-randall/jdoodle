@@ -9,7 +9,7 @@ final codeProvider =
     StateNotifierProvider<CodeNotifier, Code>(CodeNotifier.new);
 
 final initialCode = Code(
-  language: languages.first,
+  language: languages.first.copyWith(currVersionIndex: 4),
   text: script,
 );
 
@@ -26,6 +26,10 @@ class CodeNotifier extends StateNotifier<Code> {
   set version(String version) => state = state..language.version = version;
 
   String get version => state.language.version;
+
+  void updateCode(String text) {
+    state = state.copyWith(text: text);
+  }
 
   Future<void> saveCode() async {
     const debounceDuration = Duration(milliseconds: 300);

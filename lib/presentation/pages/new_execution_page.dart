@@ -34,7 +34,6 @@ class _NewExecutionPageState extends ConsumerState<NewExecutionPage> {
   @override
   Widget build(BuildContext context) {
     final executionState = ref.watch(codeExecutionStateProvider);
-    final executionService = CodeExecutionService();
     return SafeArea(
       child: Scaffold(
         appBar: _buildAppBarRow(),

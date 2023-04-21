@@ -18,4 +18,16 @@ class Code {
   JdoodleLanguage language;
   @HiveField(3)
   String text = '';
+
+  Code copyWith({
+    String? fileName,
+    JdoodleLanguage? language,
+    String? text,
+  }) {
+    return Code(
+      language: language ?? this.language,
+      fileName: fileName ?? this.fileName,
+      text: text ?? this.text,
+    );
+  }
 }
