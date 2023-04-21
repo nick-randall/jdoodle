@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jdoodle/constants/colors.dart';
 import 'package:jdoodle/constants/icons.dart';
 import 'package:jdoodle/constants/text_styles.dart';
+import 'package:jdoodle/models/code_execution_state.dart';
 import 'package:jdoodle/providers/code_execution_state_provider.dart';
 import 'package:jdoodle/services/code_execution_service.dart';
 import 'package:jdoodle/services/websocket_service.dart';
@@ -23,7 +24,7 @@ class _ExecutionPageState extends ConsumerState<ExecutionPage> {
       ref.read(codeExecutionStateProvider.notifier).resetState();
     });
     ref.read(codeExecutionStateProvider.notifier).addListener((state) {
-      if (state is SuccessState && state.awaitingUserInput) {
+      if (state is ExecutionSuccessState && state.awaitingUserInput) {
         focusNode.requestFocus();
       }
     });
@@ -41,14 +42,15 @@ class _ExecutionPageState extends ConsumerState<ExecutionPage> {
               color: AppColors.backgroundColor,
               width: double.infinity,
               child: Builder(builder: (context) {
-                if (executionState is LoadingState) {
-                  return _buildLoadingState(
+                if (executionState is ExecutionLoadingState) {
+                  return _buildExecutionLoadingState(
                     executionState,
                   );
                 } else if (executionState is ExecutionErrorState) {
                   return _buildExecutionErrorState(executionState);
                 } else {
-                  return SuccessScreen(state: executionState as SuccessState);
+                  return SuccessScreen(
+                      state: executionState as ExecutionSuccessState);
                 }
               }),
             )));
@@ -79,7 +81,7 @@ class _ExecutionPageState extends ConsumerState<ExecutionPage> {
     );
   }
 
-  Widget _buildLoadingState(LoadingState state) {
+  Widget _buildExecutionLoadingState(ExecutionLoadingState state) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -129,7 +131,7 @@ class SuccessScreen extends ConsumerStatefulWidget {
     required this.state,
     super.key,
   });
-  final SuccessState state;
+  final ExecutionSuccessState state;
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SuccessScreen();
 }
@@ -141,7 +143,7 @@ class _SuccessScreen extends ConsumerState<SuccessScreen> {
   @override
   void initState() {
     ref.read(codeExecutionStateProvider.notifier).addListener((state) {
-      if (state is SuccessState && state.awaitingUserInput) {
+      if (state is ExecutionSuccessState && state.awaitingUserInput) {
         focusNode.requestFocus();
       }
     });
