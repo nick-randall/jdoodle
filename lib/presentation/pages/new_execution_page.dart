@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jdoodle/constants/colors.dart';
 import 'package:jdoodle/constants/icons.dart';
-import 'package:jdoodle/constants/text_stlyes.dart';
+import 'package:jdoodle/constants/text_styles.dart';
 import 'package:jdoodle/providers/code_execution_state_provider.dart';
 import 'package:jdoodle/services/code_execution_service.dart';
 

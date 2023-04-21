@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jdoodle/constants/icons.dart';
-import 'package:jdoodle/constants/text_stlyes.dart';
+import 'package:jdoodle/constants/text_styles.dart';
 import 'package:jdoodle/models/execution_response.dart';
 import 'package:jdoodle/providers/execution_provider.dart';
 import 'package:jdoodle/services/execution_response_stream.dart';
