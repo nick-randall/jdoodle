@@ -89,6 +89,9 @@ class _ExecutionPageState extends ConsumerState<ExecutionPage> {
           state.waitMessage,
           style: TextStyles.body,
         ),
+        SizedBox(
+          height: 10,
+        ),
         const CircularProgressIndicator(),
       ],
     );

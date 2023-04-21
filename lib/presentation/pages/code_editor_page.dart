@@ -45,7 +45,7 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
-        drawer: MenuDrawer(),
+        drawer: const MenuDrawer(),
         body: Column(
           children: [
             _buildTextArea(),

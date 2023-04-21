@@ -17,15 +17,22 @@ class MenuDrawer extends StatelessWidget {
               height: 200,
               width: 100,
               color: Colors.black,
-              child: Center(
-                child: Text(
-                  'Compile Pilot',
-                  style: TextStyles.header,
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/code-draw-logo.png',
+                    height: 30,
+                  ),
+                  const Text(
+                    'Code Drawer',
+                    style: TextStyles.header,
+                  ),
+                ],
               ),
             ),
             Column(
-              children: [
+              children: const [
                 _DrawerMenuItem(
                   icon: languageIcon,
                   text: 'Change Language',
