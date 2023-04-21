@@ -20,7 +20,7 @@ class ExecutionNotifier extends StateNotifier<AsyncValue<ExecutionState>> {
       ExecutionResponseStream().stream;
   void _updatestate(ExecutionResponse response) {
     final prevState = state.value;
-    if (response is AwaitingUserInputResponse) {
+    if (response is StdOutReceivedResponse) {
       state = AsyncValue.data(
         ExecutionState(
           body: response.stdout,

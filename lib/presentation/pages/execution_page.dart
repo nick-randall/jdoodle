@@ -28,7 +28,7 @@ class ExecutionPage extends StatelessWidget {
                 style: const TextStyle(fontSize: 50, color: Colors.blue),
               );
             }
-            if (data is AwaitingUserInputResponse) {
+            if (data is StdOutReceivedResponse) {
               return Text(data.stdout);
             }
             return const Text("not compute time");

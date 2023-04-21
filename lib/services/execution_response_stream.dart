@@ -32,7 +32,7 @@ class ExecutionResponseStream {
       if (statusCode == 400 && messageBody == 'Token Expired') {
         _handleExpiredToken();
       } else if (statusCode == 200) {
-        sink.add(AwaitingUserInputResponse(stdout: messageBody!));
+        sink.add(StdOutReceivedResponse(stdout: messageBody!));
       } else if (statusCode == 201) {
         sink.add(RequestReceivedResponse());
       } else if (statusCode == 204) {

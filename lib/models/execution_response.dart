@@ -5,8 +5,8 @@ class ExecutionResponse extends Equatable {
   List<Object?> get props => [];
 }
 
-class AwaitingUserInputResponse extends ExecutionResponse {
-  AwaitingUserInputResponse({required this.stdout});
+class StdOutReceivedResponse extends ExecutionResponse {
+  StdOutReceivedResponse({required this.stdout});
   final String stdout;
   @override
   List<Object?> get props => [stdout];

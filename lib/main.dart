@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jdoodle/models/code.dart';
 import 'package:jdoodle/presentation/pages/editor_page.dart';
-import 'package:jdoodle/presentation/pages/execution_page.dart';
+import 'package:jdoodle/presentation/pages/new_execution_page.dart';
 
 const filesBox = 'files';
 const currFileBox = 'currFile';
