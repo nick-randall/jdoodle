@@ -7,6 +7,7 @@ import 'package:jdoodle/constants/scripts.dart';
 import 'package:jdoodle/models/code.dart';
 import 'package:jdoodle/presentation/pages/code_editor_page.dart';
 import 'package:jdoodle/presentation/pages/execution_page.dart';
+import 'package:jdoodle/presentation/pages/language_select_page.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -23,7 +24,8 @@ class JdoodleApp extends StatelessWidget {
     return MaterialApp(
       routes: <String, WidgetBuilder>{
         '/code-editor': (BuildContext context) => const CodeEditorPage(),
-        '/execution-page': (BuildContext context) => const ExecutionPage()
+        '/execution-page': (BuildContext context) => const ExecutionPage(),
+        '/language-select': (BuildContext context) => const LanguageSelectPage()
       },
       home: const CodeEditorPage(),
       theme: ThemeData(textTheme: Typography.whiteMountainView),

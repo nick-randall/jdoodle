@@ -32,10 +32,11 @@ class MenuDrawer extends StatelessWidget {
               ),
             ),
             Column(
-              children: const [
+              children: [
                 _DrawerMenuItem(
                   icon: languageIcon,
                   text: 'Change Language',
+                  onTap: () => Navigator.pushNamed(context, '/language-select'),
                 ),
                 _DrawerMenuItem(
                   icon: statistics,
@@ -51,25 +52,33 @@ class MenuDrawer extends StatelessWidget {
 }
 
 class _DrawerMenuItem extends StatelessWidget {
-  const _DrawerMenuItem({required this.text, required this.icon});
+  const _DrawerMenuItem({
+    required this.text,
+    required this.icon,
+    this.onTap,
+  });
   final String text;
   final Icon icon;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: icon,
-          ),
-          Text(
-            text,
-            style: TextStyles.body,
-          )
-        ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: icon,
+            ),
+            Text(
+              text,
+              style: TextStyles.body,
+            )
+          ],
+        ),
       ),
     );
   }

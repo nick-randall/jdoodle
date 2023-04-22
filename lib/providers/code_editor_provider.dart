@@ -12,7 +12,7 @@ final codeProvider =
     StateNotifierProvider<CodeNotifier, Code>(CodeNotifier.new);
 
 final initialCode = Code(
-  language: languages.last.copyWith(currVersionIndex: 0),
+  language: java, //languages.last.copyWith(currVersionIndex: 0),
   text: script,
 );
 
