@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jdoodle/constants/languages.dart';
 import 'package:jdoodle/constants/scripts.dart';
 import 'package:jdoodle/language.dart';
 import 'package:jdoodle/models/code.dart';
@@ -6,13 +7,13 @@ import 'package:jdoodle/services/code_service.dart';
 import 'package:jdoodle/services/hive_code_service.dart';
 import 'package:jdoodle/util/debounce.dart';
 
-import '../constants/languages.dart';
-
 final codeProvider =
     StateNotifierProvider<CodeNotifier, Code>(CodeNotifier.new);
 
 final initialCode = Code(
-  language: java, //languages.last.copyWith(currVersionIndex: 0),
+  language: languages
+      .firstWhere((element) => element.code == 'cpp')
+      .copyWith(currVersionIndex: 0),
   text: script,
 );
 
@@ -24,16 +25,29 @@ class CodeNotifier extends StateNotifier<Code> {
   final CodeService codeService = HiveCodeService();
 
   set language(JdoodleLanguage language) {
-    state.language = language;
+    state = state.copyWith(language: language);
     final snippet = codeSnippets[language.code];
     if (snippet != null) {
-      state.text = snippet;
+      state = state.copyWith(text: snippet);
     }
   }
 
   JdoodleLanguage get language => state.language;
 
-  set version(String version) => state = state..language.version = version;
+  void setVersionIndex(int versionIndex) {
+    final prevLanguage = state.language;
+
+    final newLanguage = prevLanguage.copyWith(currVersionIndex: versionIndex);
+    state = state.copyWith(language: newLanguage);
+  }
+
+  void setVersion(String versionName) {
+    final prevLanguage = state.language;
+    final versionIndex = prevLanguage.versions.indexOf(versionName);
+
+    final newLanguage = prevLanguage.copyWith(currVersionIndex: versionIndex);
+    state = state.copyWith(language: newLanguage);
+  }
 
   String get version => state.language.version;
 
@@ -53,6 +67,9 @@ class CodeNotifier extends StateNotifier<Code> {
     if (prevSavedCode != null) {
       state = prevSavedCode;
     }
+    print('curr lang: ${state.language.code}');
+    print('available versions: ${state.language.versions}');
+    print('currVersion: ${language.currVersionIndex}');
   }
 }
 

@@ -14,8 +14,10 @@ class ExecutionLoadingState extends ExecutionState {
 class ServerAcknowledgedReceiptState extends ExecutionLoadingState {}
 
 class ExecutionErrorState extends ExecutionState {
-  final String errorMessage =
-      'Something went wrong.\n Contact jDoodle or\n you can try again.';
+  ExecutionErrorState({String? message})
+      : errorMessage = message ??
+            'Something went wrong.\n Contact jDoodle or you can try again.';
+  final String errorMessage;
   @override
   List<Object?> get props => [errorMessage];
 }

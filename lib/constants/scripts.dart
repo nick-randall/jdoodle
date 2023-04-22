@@ -7,8 +7,7 @@ int main() {
     fgets(input, 100, stdin);
     printf("You typed this line: %s", input);
     return 0;
-}
-    ''',
+}''',
   'c++': '''
 #include <iostream>
 using namespace std;
@@ -18,8 +17,7 @@ int main() {
     getline(cin, input);
     cout << "You typed this line: " << input << endl;
     return 0;
-}
-    ''',
+}''',
   'c++14': '''
 #include <iostream>
 using namespace std;
@@ -29,8 +27,7 @@ int main() {
     getline(cin, input);
     cout << "You typed this line: " << input << endl;
     return 0;
-}
-    ''',
+}''',
   'c++17': '''
 #include <iostream>
 using namespace std;
@@ -40,33 +37,28 @@ int main() {
     getline(cin, input);
     cout << "You typed this line: " << input << endl;
     return 0;
-}
-    ''',
+}''',
   'php': '''
 <?php
 \$input = readline("Enter a line: ");
 echo "You typed this line: " . \$input . "\n";
-?>
-    ''',
+?>''',
   'perl': '''
 print "Enter a line: ";
 my \$input = <STDIN>;
 chomp \$input;
-print "You typed this line: \$input\n";
-    ''',
+print "You typed this line: \$input\n";''',
   'python2': '''
 input = raw_input("Enter a line: ")
 print "You typed this line:", input
     ''',
   'python3': '''
 input = input("Enter a line: ")
-print("You typed this line:", input)
-    ''',
+print("You typed this line:", input)''',
   'ruby': '''
 print "Enter a line: "
 input = gets.chomp
-puts "You typed this line: #{input}"
-    ''',
+puts "You typed this line: #{input}"''',
   'go': '''
 package main
 import "fmt"
@@ -75,25 +67,21 @@ func main() {
     fmt.Print("Enter a line: ")
     fmt.Scanln(&input)
     fmt.Println("You typed this line:", input)
-}
-    ''',
+}''',
   'scala': '''
 object Main extends App {
     println("Enter a line: ")
     val input = scala.io.StdIn.readLine()
     println("You typed this line: " + input)
-}
-    ''',
+}''',
   'bash': r'''
 echo -n "Enter a line: "
 read input
-echo "You typed this line: $input"
-    ''',
+echo "You typed this line: $input"''',
   'sql': '''
 SELECT 'Enter a line: ';
 SET @input = (SELECT TRIM(BOTH '"' FROM @@VERSION_COMMENT));
-SELECT CONCAT('You typed this line: ', @input);
-    ''',
+SELECT CONCAT('You typed this line: ', @input);''',
   'pascal': '''
 program UserInput;
 uses sysutils;
@@ -103,8 +91,7 @@ begin
     Write('Enter a line: ');
     Readln(input);
     Writeln('You typed this line: ', input);
-end.
-    ''',
+end.''',
   'c#': '''
 using System;
 class MainClass {
@@ -113,8 +100,7 @@ class MainClass {
         string input = Console.ReadLine();
         Console.WriteLine("You typed this line: " + input);
     }
-}
-    ''',
+}''',
   'objective-c': '''
 #import <Foundation/Foundation.h>
 int main() {
@@ -124,20 +110,17 @@ int main() {
     NSString *nsInput = [NSString stringWithUTF8String:input];
     printf("You typed this line: %s", [nsInput UTF8String]);
     return 0;
-}
-    ''',
+}''',
   'swift': '''
 import Foundation
 print("Enter a line: ", terminator: "")
 if let input = readLine() {
     print("You typed this line: \(input)")
-}
-    ''',
+}''',
   'groovy': r'''
 print "Enter a line: "
 def input = System.console().readLine()
-println "You typed this line: $input"
-    ''',
+println "You typed this line: $input"''',
   'fortran': '''
 program user_input
     character(len=100) :: input
@@ -157,20 +140,17 @@ end program user_input
   'lua': '''
 io.write("Enter a line: ")
 local input = io.read()
-print("You typed this line: " .. input)
-    ''',
+print("You typed this line: " .. input)''',
   'tcl': r'''
 puts -nonewline "Enter a line: "
 flush stdout
 set input [gets stdin]
-puts "You typed this line: $input"
-    ''',
+puts "You typed this line: $input"''',
   'hack': '''
 <?hh
 \$input = readline("Enter a line: ");
 echo "You typed this line: " . \$input . "\n";
-?>
-    ''',
+?>''',
   'rust': '''
 use std::io;
 fn main() {
@@ -178,8 +158,7 @@ fn main() {
     println!("Enter a line: ");
     io::stdin().read_line(&mut input).unwrap();
     println!("You typed this line: {}", input.trim());
-}
-    ''',
+}''',
   'ada': '''
 with Ada.Text_IO; use Ada.Text_IO;
 procedure User_Input is
@@ -190,12 +169,10 @@ begin
     Get_Line(input, Last => 100);
     Put("You typed this line: ");
     Put_Line(input(1..input'Length));
-end User_Input;
-    ''',
+end User_Input;''',
   'r': '''
 input <- readline("Enter a line: ")
-cat("You typed this line: ", input, "\n")
-    ''',
+cat("You typed this line: ", input, "\n")''',
   'freebasic': r'''
 #include "vbcompat.bi"
 dim input as string
@@ -220,8 +197,7 @@ PROCEDURE DIVISION.
     DISPLAY "Enter a line: ".
     ACCEPT INPUT.
     DISPLAY "You typed this line: " INPUT.
-    STOP RUN.
-    ''',
+    STOP RUN.''',
   'dart': r'''
   import 'dart:io';
 void main() {
@@ -418,7 +394,7 @@ echo $input
   'java': '''
 import java.util.Scanner;
 
-class Main {
+public class Main {
   public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);
     System.out.print("Enter a line: ");
@@ -545,10 +521,7 @@ disp(["You typed this line: " line]);
 ''',
 
   'coffeescript': '''
-console.log("Enter a line: ");
-process.stdin.on 'data', (line) ->
-  console.log "You
-
-
+userInput = prompt("Please enter some text:")
+console.log "You entered: #{userInput}"
 };''',
 };

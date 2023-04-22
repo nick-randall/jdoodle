@@ -25,6 +25,7 @@ dependencies:
   web_socket_channel: ^2.4.0
   socket_io_client: ^2.0.1
   http: ^0.13.5
+  flutter_spinkit: ^5.1.0
   searchable_listview: ^2.4.0
   sockjs_client_wrapper: ^1.2.0
   stomp_dart_client: ^0.4.4

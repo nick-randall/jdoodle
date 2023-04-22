@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:jdoodle/models/execution_response.dart';
+import 'package:jdoodle/presentation/pages/execution_page.dart';
 import 'package:jdoodle/services/websocket_service.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
 
@@ -44,7 +45,9 @@ class ExecutionResponseStream {
           ),
         );
       } else if (statusCode == 503) {
-        sink.add(ErrorResponse());
+        sink.add(ErrorResponse(messageBody));
+      } else if (statusCode == 417) {
+        sink.add(StdOutReceivedResponse(stdout: messageBody!));
       }
       print('status code: $statusCode');
     }

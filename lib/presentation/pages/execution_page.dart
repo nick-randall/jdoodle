@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:jdoodle/constants/colors.dart';
 import 'package:jdoodle/constants/icons.dart';
 import 'package:jdoodle/constants/text_styles.dart';
@@ -89,10 +90,12 @@ class _ExecutionPageState extends ConsumerState<ExecutionPage> {
           state.waitMessage,
           style: TextStyles.body,
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
-        const CircularProgressIndicator(),
+        const SpinKitChasingDots(
+          color: AppColors.secondaryBackgroudColor,
+        ),
       ],
     );
   }

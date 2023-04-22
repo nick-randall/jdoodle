@@ -22,7 +22,7 @@ class CodeExecutionStateNotifier extends StateNotifier<ExecutionState> {
       state = StdOutReceived(stdout: response.stdout);
     }
     if (response is ErrorResponse) {
-      state = ExecutionErrorState();
+      state = ExecutionErrorState(message: response.errorMessage);
     }
     if (response is EndOfExecutionsResponse) {
       final prevState = state;

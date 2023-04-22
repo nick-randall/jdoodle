@@ -1,7 +1,7 @@
 import 'package:code_text_field/code_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:highlight/languages/dart.dart';
+import 'package:jdoodle/constants/highlighting.dart';
 import 'package:jdoodle/constants/icons.dart';
 import 'package:jdoodle/constants/text_styles.dart';
 import 'package:jdoodle/models/code.dart';
@@ -113,20 +113,20 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
   void initState() {
     super.initState();
     final code = ref.read(codeProvider);
+
+    ref.read(codeProvider.notifier).addListener((code) {
+      if (code.text != _codeController?.text) {
+        _codeController?.text = code.text;
+      }
+    });
+
     _codeController = CodeController(
       text: code.text,
-      language: dart,
-
       patternMap: {
         '".*"': const TextStyle(color: Colors.yellow),
-        r'[a-zA-Z0-9]+\(.*\)': const TextStyle(color: Colors.green),
+        // r'[a-zA-Z0-9]+\(.*\)': const TextStyle(color: Colors.green),
       },
-      stringMap: {
-        'void': const TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
-        'print':
-            const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
-      },
-      // theme: monokaiSublimeTheme,
+      stringMap: codeHighlighting,
     );
     _codeController?.addListener(() {
       final text = _codeController?.text;

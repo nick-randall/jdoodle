@@ -33,6 +33,9 @@ class CodeExecutionService {
     cachedExecutionAttempt = code;
 
     if (websocket.client.connected) {
+      print(code.text);
+      print(code.language.code);
+      print(code.language.name);
       final data = jsonEncode({
         'script': code.text,
         'language': code.language.code,

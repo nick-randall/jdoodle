@@ -21,14 +21,13 @@ class EndOfExecutionsResponse extends ExecutionResponse {
 
 class RequestReceivedResponse extends ExecutionResponse {
   RequestReceivedResponse();
-  // final double computeTime;
   @override
   List<Object?> get props => [];
 }
 
 class ErrorResponse extends ExecutionResponse {
-  ErrorResponse();
-  // final double computeTime;
+  ErrorResponse([this.errorMessage]);
+  final String? errorMessage;
   @override
   List<Object?> get props => [];
 }
