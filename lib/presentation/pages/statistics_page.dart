@@ -32,8 +32,12 @@ class StatisticsPage extends ConsumerWidget {
   }
 
   String getTime(int seconds) {
-    if (seconds > 3599) return '${(seconds / 3600).floor()} hours';
-    if (seconds > 59) return '${(seconds / 60).floor()} minutes';
+    if (seconds > 3599) {
+      return '${(seconds / 3600).floor()} hour${seconds > 7199 ? 's' : ''}';
+    }
+    if (seconds > 59) {
+      return '${(seconds / 60).floor()} minute${seconds > 119 ? 's' : ''}';
+    }
     return '$seconds seconds';
   }
 }

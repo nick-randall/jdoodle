@@ -101,9 +101,11 @@ class Main {
 }''';
 
 const scala = '''
-object Main {
-    def main(args: Array[String]): Unit = {
-        println("Hello, World!")
+object MyClass {
+    def add(x:Int, y:Int) = x + y;
+
+    def main(args: Array[String]) {
+        print("sum of x + y = " + add(25,10));
     }
 }''';
 
@@ -450,7 +452,11 @@ const lolcode = '''
 CAN HAS STDIO?
 VISIBLE "Hello World"
 KTHXBYE''';
-const falcon = '''"Hello World" puts''';
+const falcon = '''
+> x = 10
+> y = 25
+> z = x + y
+> "Sum of ",x ," and ", y," is ", z''';
 const fantom = '''class Main { static Void main() { echo("Hello World"); } }''';
 const pike = '''int main() { write("Hello World\n"); return 0; }''';
 const whitespace =
