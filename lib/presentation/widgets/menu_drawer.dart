@@ -39,9 +39,11 @@ class MenuDrawer extends StatelessWidget {
                   onTap: () =>
                       Navigator.popAndPushNamed(context, '/language-select'),
                 ),
-                const _DrawerMenuItem(
+                _DrawerMenuItem(
                   icon: statistics,
                   text: 'Statistics',
+                  onTap: () =>
+                      Navigator.popAndPushNamed(context, '/statistics'),
                 ),
               ],
             )

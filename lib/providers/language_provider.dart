@@ -1,19 +1,30 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jdoodle/language.dart';
+import 'package:jdoodle/services/hive_statistics_service.dart';
 
-import '../constants/languages.dart';
-
-final languageProvider =
-    StateNotifierProvider<LanguageNotifier, JdoodleLanguage>(
-  (ref) => LanguageNotifier(),
+final statisticsProvider =
+    StateNotifierProvider<StatisticsNotifier, Map<String, int>>(
+  (ref) => StatisticsNotifier(),
 );
 
-class LanguageNotifier extends StateNotifier<JdoodleLanguage> {
-  LanguageNotifier() : super(java);
+class StatisticsNotifier extends StateNotifier<Map<String, int>> {
+  StatisticsNotifier() : super({}) {
+    init();
+  }
+  final statisticsService = HiveStatisticsService();
 
-  set language(JdoodleLanguage language) => state = language;
-  JdoodleLanguage get language => state;
+  Future<void> init() async {
+    languageTimeMap = await statisticsService.getLanguageTimeMap();
+  }
 
-  set version(String version) => state = state..version = version;
-  String get version => state.version;
+  set languageTimeMap(Map<String, int> map) => state = map;
+  Map<String, int> get languageTimeMap => state;
+
+  Future<void> addTimeToStats(JdoodleLanguage language, int seconds) async {
+    statisticsService.addTimeToLanguageUsed(
+      languageString: language.toString(),
+      seconds: seconds,
+    );
+    state = await statisticsService.getLanguageTimeMap();
+  }
 }

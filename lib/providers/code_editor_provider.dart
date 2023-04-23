@@ -1,10 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jdoodle/constants/hello_world_scripts.dart';
 import 'package:jdoodle/constants/languages.dart';
 import 'package:jdoodle/language.dart';
 import 'package:jdoodle/models/code.dart';
+import 'package:jdoodle/providers/language_provider.dart';
 import 'package:jdoodle/services/code_service.dart';
 import 'package:jdoodle/services/hive_code_service.dart';
+import 'package:jdoodle/services/hive_statistics_service.dart';
+import 'package:jdoodle/services/statitsics_service.dart';
 import 'package:jdoodle/util/debounce.dart';
 
 final codeProvider =
@@ -20,9 +25,27 @@ final initialCode = Code(
 class CodeNotifier extends StateNotifier<Code> {
   CodeNotifier(this.ref) : super(initialCode) {
     restorePrevCode();
+    resetTimer();
   }
   final Ref ref;
   final CodeService codeService = HiveCodeService();
+  final StatisticsService statisticsService = HiveStatisticsService();
+  late Timer timer;
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
+
+  void resetTimer() {
+    timer = Timer.periodic(
+        const Duration(seconds: 1),
+        (timer) => ref.read(statisticsProvider.notifier).addTimeToStats(
+              state.language,
+              1,
+            ));
+  }
 
   set language(JdoodleLanguage language) {
     state = state.copyWith(language: language);
@@ -30,6 +53,7 @@ class CodeNotifier extends StateNotifier<Code> {
     if (snippet != null) {
       state = state.copyWith(text: snippet);
     }
+    resetTimer();
   }
 
   JdoodleLanguage get language => state.language;

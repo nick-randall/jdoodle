@@ -27,12 +27,9 @@ class JdoodleLanguage {
   set version(String version) => currVersionIndex = versions.indexOf(version);
   String get version => versions[currVersionIndex];
 
-  Map<String, dynamic> toMap() {
-    return {
-      'name': name,
-      'code': code,
-      'versions': versions.toSet().toList(),
-    };
+  @override
+  String toString() {
+    return '$name($version)';
   }
 
   JdoodleLanguage copyWith({

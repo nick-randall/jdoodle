@@ -10,6 +10,7 @@ import 'package:jdoodle/presentation/pages/code_editor_page.dart';
 import 'package:jdoodle/presentation/pages/execution_page.dart';
 import 'package:jdoodle/presentation/pages/language_search.dart';
 import 'package:jdoodle/presentation/pages/language_select_page.dart';
+import 'package:jdoodle/presentation/pages/statistics_page.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -18,6 +19,8 @@ void main() async {
     ..registerAdapter(JdoodleLanguageAdapter());
   await Hive.openBox<Code>(filesBox);
   await Hive.openBox<Code>(currFileBox);
+  await Hive.openBox<String>(statsBox);
+
   runApp(const ProviderScope(child: JdoodleApp()));
 }
 
@@ -33,6 +36,7 @@ class JdoodleApp extends StatelessWidget {
         '/language-select': (BuildContext context) =>
             const LanguageSelectPage(),
         '/language-search': (BuildContext context) => const LanguageSearch(),
+        '/statistics': (BuildContext context) => const StatisticsPage(),
       },
       home: const CodeEditorPage(),
       theme: ThemeData(textTheme: Typography.whiteMountainView),
