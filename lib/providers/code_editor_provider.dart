@@ -12,7 +12,7 @@ final codeProvider =
 
 final initialCode = Code(
   language: languages
-      .firstWhere((element) => element.code == 'cpp')
+      .firstWhere((element) => element.code == 'java')
       .copyWith(currVersionIndex: 0),
   text: script,
 );
@@ -52,6 +52,7 @@ class CodeNotifier extends StateNotifier<Code> {
   String get version => state.language.version;
 
   void updateCode(String text) {
+    saveCode();
     state = state.copyWith(text: text);
   }
 
@@ -59,7 +60,7 @@ class CodeNotifier extends StateNotifier<Code> {
     const debounceDuration = Duration(milliseconds: 300);
     await ref.debounce(debounceDuration);
 
-    await codeService.writeCodeToDevice(code: state);
+    await codeService.setCurrentCode(code: state);
   }
 
   Future<void> restorePrevCode() async {
@@ -67,9 +68,6 @@ class CodeNotifier extends StateNotifier<Code> {
     if (prevSavedCode != null) {
       state = prevSavedCode;
     }
-    print('curr lang: ${state.language.code}');
-    print('available versions: ${state.language.versions}');
-    print('currVersion: ${language.currVersionIndex}');
   }
 }
 

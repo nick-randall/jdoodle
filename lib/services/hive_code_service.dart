@@ -24,7 +24,9 @@ class HiveCodeService extends CodeService {
   @override
   Future<void> writeCodeToDevice({required Code code}) async {
     final box = Hive.box<Code>(filesBox);
+
     await box.put(code.id, code);
+    final output = box.get(code.id);
   }
 
   @override
@@ -40,7 +42,7 @@ class HiveCodeService extends CodeService {
   }
 
   @override
-  Future<void> setCurrentCode(Code code) async {
+  Future<void> setCurrentCode({required Code code}) async {
     final curFileBox = Hive.box<Code>(currFileBox);
     await curFileBox.put(currFileKey, code);
   }

@@ -7,5 +7,5 @@ abstract class CodeService {
   });
   Code? getCurrentCode();
   List<Code> getAllCodes();
-  Future<void> setCurrentCode(Code code);
+  Future<void> setCurrentCode({required Code code});
 }

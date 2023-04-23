@@ -5,6 +5,7 @@ import 'package:jdoodle/constants/highlighting.dart';
 import 'package:jdoodle/constants/icons.dart';
 import 'package:jdoodle/constants/text_styles.dart';
 import 'package:jdoodle/models/code.dart';
+import 'package:jdoodle/presentation/widgets/code_editor.dart';
 import 'package:jdoodle/presentation/widgets/menu_drawer.dart';
 import 'package:jdoodle/providers/code_editor_provider.dart' show codeProvider;
 import 'package:jdoodle/services/code_execution_service.dart';
@@ -95,58 +96,6 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
           ],
         ),
       ],
-    );
-  }
-}
-
-class CodeEditor extends ConsumerStatefulWidget {
-  const CodeEditor({super.key});
-
-  @override
-  _CodeEditorState createState() => _CodeEditorState();
-}
-
-class _CodeEditorState extends ConsumerState<CodeEditor> {
-  CodeController? _codeController;
-
-  @override
-  void initState() {
-    super.initState();
-    final code = ref.read(codeProvider);
-
-    ref.read(codeProvider.notifier).addListener((code) {
-      if (code.text != _codeController?.text) {
-        _codeController?.text = code.text;
-      }
-    });
-
-    _codeController = CodeController(
-      text: code.text,
-      patternMap: {
-        '".*"': const TextStyle(color: Colors.yellow),
-        // r'[a-zA-Z0-9]+\(.*\)': const TextStyle(color: Colors.green),
-      },
-      stringMap: codeHighlighting,
-    );
-    _codeController?.addListener(() {
-      final text = _codeController?.text;
-      if (text != null) {
-        ref.read(codeProvider.notifier).updateCode(text);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _codeController?.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return CodeField(
-      controller: _codeController!,
-      textStyle: TextStyles.codeEditor,
     );
   }
 }

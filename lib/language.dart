@@ -1,3 +1,8 @@
+import 'package:hive_flutter/hive_flutter.dart';
+
+part 'language.g.dart';
+
+@HiveType(typeId: 2)
 class JdoodleLanguage {
   JdoodleLanguage({
     required this.name,
@@ -10,10 +15,13 @@ class JdoodleLanguage {
       : name = map['name'] as String,
         code = map['code'] as String,
         versions = List<String>.from(map['versions'] as List<String>);
-
+  @HiveField(0)
   final String name;
+  @HiveField(1)
   final String code;
+  @HiveField(2)
   List<String> versions;
+  @HiveField(3)
   int currVersionIndex = 0;
 
   set version(String version) => currVersionIndex = versions.indexOf(version);

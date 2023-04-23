@@ -13,6 +13,9 @@ import 'package:jdoodle/presentation/pages/language_select_page.dart';
 
 void main() async {
   await Hive.initFlutter();
+  Hive
+    ..registerAdapter(CodeAdapter())
+    ..registerAdapter(JdoodleLanguageAdapter());
   await Hive.openBox<Code>(filesBox);
   await Hive.openBox<Code>(currFileBox);
   runApp(const ProviderScope(child: JdoodleApp()));
