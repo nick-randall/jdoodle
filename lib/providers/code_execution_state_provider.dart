@@ -36,6 +36,11 @@ class CodeExecutionStateNotifier extends StateNotifier<ExecutionState> {
           newStdout: 'execution complete',
           executionTime: response.computeTime,
         );
+      } else if (prevState is ServerTimeoutResponse) {
+        state = ExecutionComplete(
+          newStdout: (prevState as ServerTimeoutResponse).message,
+          executionTime: response.computeTime,
+        );
       }
     }
   }

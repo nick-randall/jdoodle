@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jdoodle/constants/hello_world_scripts.dart';
 import 'package:jdoodle/constants/languages.dart';
-import 'package:jdoodle/constants/scripts.dart';
 import 'package:jdoodle/language.dart';
 import 'package:jdoodle/models/code.dart';
 import 'package:jdoodle/services/code_service.dart';
@@ -26,7 +26,7 @@ class CodeNotifier extends StateNotifier<Code> {
 
   set language(JdoodleLanguage language) {
     state = state.copyWith(language: language);
-    final snippet = codeSnippets[language.code];
+    final snippet = helloWorldScripts[language.code];
     if (snippet != null) {
       state = state.copyWith(text: snippet);
     }

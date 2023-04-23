@@ -4,7 +4,9 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:jdoodle/constants/colors.dart';
 import 'package:jdoodle/constants/icons.dart';
 import 'package:jdoodle/constants/text_styles.dart';
+import 'package:jdoodle/models/code.dart';
 import 'package:jdoodle/models/code_execution_state.dart';
+import 'package:jdoodle/providers/code_editor_provider.dart';
 import 'package:jdoodle/providers/code_execution_state_provider.dart';
 import 'package:jdoodle/services/code_execution_service.dart';
 import 'package:jdoodle/services/websocket_service.dart';
@@ -33,31 +35,38 @@ class _ExecutionPageState extends ConsumerState<ExecutionPage> {
     super.initState();
   }
 
+  final codeExecutionService = CodeExecutionService();
+
   @override
   Widget build(BuildContext context) {
     final executionState = ref.watch(codeExecutionStateProvider);
+    final code = ref.watch(codeProvider);
     return SafeArea(
-        child: Scaffold(
-            appBar: _buildAppBarRow(),
-            body: Container(
-              color: AppColors.backgroundColor,
-              width: double.infinity,
-              child: Builder(builder: (context) {
-                if (executionState is ExecutionLoadingState) {
-                  return _buildExecutionLoadingState(
-                    executionState,
-                  );
-                } else if (executionState is ExecutionErrorState) {
-                  return _buildExecutionErrorState(executionState);
-                } else {
-                  return SuccessScreen(
-                      state: executionState as ExecutionSuccessState);
-                }
-              }),
-            )));
+      child: Scaffold(
+        appBar: _buildAppBarRow(code),
+        body: Container(
+          color: AppColors.backgroundColor,
+          width: double.infinity,
+          child: Builder(
+            builder: (context) {
+              if (executionState is ExecutionLoadingState) {
+                return _buildExecutionLoadingState(
+                  executionState,
+                );
+              } else if (executionState is ExecutionErrorState) {
+                return _buildExecutionErrorState(executionState);
+              } else {
+                return SuccessScreen(
+                    state: executionState as ExecutionSuccessState);
+              }
+            },
+          ),
+        ),
+      ),
+    );
   }
 
-  PreferredSizeWidget _buildAppBarRow() {
+  PreferredSizeWidget _buildAppBarRow(Code code) {
     return AppBar(
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -67,17 +76,18 @@ class _ExecutionPageState extends ConsumerState<ExecutionPage> {
             style: TextStyles.header,
           ),
           Row(
-            children: const [
-              playIcon,
-              SizedBox(
+            children: [
+              IconButton(
+                  onPressed: () => codeExecutionService
+                      .sendExecuteScriptMessageToServer(code: code),
+                  icon: playIcon),
+              const SizedBox(
                 width: 8,
               ),
-              filterIcon
             ],
           )
         ],
       ),
-      // leading: Text('run'),
       backgroundColor: Colors.black,
     );
   }

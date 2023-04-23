@@ -44,6 +44,9 @@ class ExecutionResponseStream {
             computeTime: double.parse(messageBody!),
           ),
         );
+      } else if (statusCode == 508) {
+        print(messageBody); // sink.add(ErrorResponse(messageBody));
+        sink.add(ServerTimeoutResponse(message: messageBody!));
       } else if (statusCode == 503) {
         sink.add(ErrorResponse(messageBody));
       } else if (statusCode == 417) {

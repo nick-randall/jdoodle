@@ -89,7 +89,7 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
               icon: playIcon,
             ),
             IconButton(
-              onPressed: _handleExecute,
+              onPressed: () => Navigator.pushNamed(context, '/language-select'),
               icon: filterIcon,
             ),
           ],

@@ -43,15 +43,18 @@ int main() {
 \$input = readline("Enter a line: ");
 echo "You typed this line: " . \$input . "\n";
 ?>''',
-  'perl': '''
-print "Enter a line: ";
-my \$input = <STDIN>;
-chomp \$input;
-print "You typed this line: \$input\n";''',
+  'perl': r'''
+$x = 10;
+$y = 25;
+$z = $x+$y;
+
+print "Sum of $x + $y = $z";''',
   'python2': '''
-input = raw_input("Enter a line: ")
-print "You typed this line:", input
-    ''',
+x=10;
+y=25;
+z=x+y;
+
+print "Sum of x+y =", z;''',
   'python3': '''
 input = input("Enter a line: ")
 print("You typed this line:", input)''',
@@ -403,14 +406,13 @@ public class Main {
   }
 }''',
   'c99': '''
-#include <stdio.h>
+#include<stdio.h>
 
 int main(void) {
-  char line[256];
-  printf("Enter a line: ");
-  fgets(line, sizeof(line), stdin);
-  printf("You typed this line: %s", line);
-  return 0;
+    int x=10;
+    int y=25;
+    int z=x+y;
+    printf("Sum of x+y = %i", z);
 }''',
   'cpp': '''
 #include <iostream>
@@ -477,8 +479,8 @@ int main() {
   return 0;
 }''',
   'yabasic': r'''
-input "Enter a line: ", line$
-print "You typed this line: " + line$
+input "Enter a line: " line$
+print ("You typed this line: " + line$)
 ''',
   'clojure': '''
 (defn -main []
